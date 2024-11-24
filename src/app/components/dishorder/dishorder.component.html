@@ -1,0 +1,12 @@
+<h2 class="text-3xl font-bold text-center text-gray-900 mb-6">Pedido de bebidas</h2>
+
+@for (dishOrder of dishOrders(); track $index) {
+  @if(dishOrder.idPedido === orderIdItem()){
+  <div class="bg-white p-4 rounded-lg shadow-lg mb-4 hover:bg-gray-100 transition-colors duration-300">
+    <p class="text-xl text-gray-800 font-medium">Nombre de Plato: <span class="text-blue-600 font-bold">{{ dishOrder.nombrePlato }}</span></p>
+    <p class="text-lg text-gray-600">Cantidad de plato: <span class="text-green-600 font-semibold">{{ dishOrder.quantity }}</span></p>  
+    <!-- <button (click)="quantity(dishOrder.idPedido, dishOrder.idPlato)" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-300">
+      Cantidad
+    </button> -->
+  </div>
+}}

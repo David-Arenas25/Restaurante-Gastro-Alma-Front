@@ -20,8 +20,19 @@ export class OrderService extends BasehttpService {
   calculateTotal(id:number){
     return this.http.get(`${this.API_URL}/orders/total?id=${id}`,{})
    }
+
+   
    getById(id:number){
     return this.http.get<Order>(`${this.API_URL}/orders/id/${id}`)
+   }
+
+   save(order:Order){
+    return this.http.post<Order>(`${this.API_URL}/orders/save`,order)
+   }
+   
+   delete(id:number){
+    return this.http.delete(`${this.API_URL}/orders/delete/${id}`)
+  
    }
 
 

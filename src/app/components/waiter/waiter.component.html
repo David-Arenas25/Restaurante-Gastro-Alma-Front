@@ -1,0 +1,10 @@
+<div class="space-y-4">
+    @for (waiter of waiters(); track $index) {
+      @if (waiter.waiterId === waiterId()) {
+      <div class="p-6 border border-gray-300 rounded-lg shadow-lg bg-white">
+        <p class="text-xs text-gray-400">ID: {{waiter.waiterId}}</p>
+        <p class="text-xl font-bold text-gray-700">{{waiter.waiterName}} {{waiter.waiterLastName}}</p>
+      </div>
+    }
+  }
+  </div>
