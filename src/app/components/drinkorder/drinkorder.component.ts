@@ -51,10 +51,5 @@ quantity(orderId: number, drinkId: number) {
     }
   });
 }
-  
-
-
-
- 
 
 }

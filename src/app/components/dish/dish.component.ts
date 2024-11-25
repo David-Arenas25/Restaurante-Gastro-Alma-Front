@@ -16,9 +16,10 @@ export class DishComponent {
 
   dishes = signal<Dish[]>([])
   dishService = inject(DishService)
-  quantity = new FormControl('',Validators.required)
+  quantity = new FormControl(Validators.required)
   dishOrderService = inject(DishorderService)
   order = input.required<Order>()
+  dishesId:number[] = []
 
 
   ngOnInit(){
@@ -33,17 +34,16 @@ export class DishComponent {
     })
   }
 
-  saveOrder(dish:Dish){
+  saveOrder(dishId:number){
     if(this.quantity.valid){
       const value = this.quantity.value
       if(value!==null){
     
-    this.dishOrderService.save(this.order().orderId,dish.dishId,parseInt(value)).subscribe({
+    this.dishOrderService.save(this.order().orderId,dishId,parseInt(value)).subscribe({
       next:(saved)=>{
         alert('se guardo')
-        this.quantity.setValue('')
-        this.getAll()
-        
+        this.quantity.setValue([])
+        this.getAll()        
       },error:(error)=>{
         alert('error al guardar la orden del platillo')
       }
@@ -52,16 +52,6 @@ export class DishComponent {
   }
 }}
 
-saveAll(dish:Dish){
-  let inputs = document.querySelectorAll('input')
-  inputs.forEach((input)=>{
-    this.dishOrderService.save(this.order().orderId,dish.dishId,parseInt(input.value)).subscribe({
-      next: order => {
-        alert('gano')
-      },error: (error) => alert("perdio")
-    })
-}
-  )}
 
 }
 
