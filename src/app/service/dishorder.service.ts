@@ -20,4 +20,10 @@ export class DishorderService extends BasehttpService {
   quantity(orderId:number, dishId:number){
     return this.http.get<number>(`${this.API_URL}/dishorders/quantity/?idPedido=${orderId}&idBebida=${dishId}`)
    }
+
+   delete(id:number){
+    return this.http.delete(`${this.API_URL}/dishorders/delete?id=${id}`)  
+   }
+
 }
+

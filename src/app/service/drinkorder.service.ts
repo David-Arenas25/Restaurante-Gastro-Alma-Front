@@ -20,5 +20,11 @@ export class DrinkorderService extends BasehttpService {
    save(orderId:number, drinkId:number, quantity:number) {
     return this.http.post<DrinkOrder>(`${this.API_URL}/drinkorders/save?orderId=${orderId}&drinkId=${drinkId}&quantity=${quantity}`,{});
   }
+
+  delete(id:number){
+    return this.http.delete(`${this.API_URL}/drinkorders/delete?id=${id}`)
+  
+   }
    
 }
+

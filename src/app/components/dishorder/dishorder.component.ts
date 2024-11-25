@@ -48,4 +48,15 @@ export class DishorderComponent {
     });
   }
 
+  deleteDishOrder(orderId:number){
+    this.dishOrderService.delete(orderId).subscribe({
+      next: (deleteOrder) =>{
+        alert('se borro')
+      },error: (error)=>{
+        alert('error al borrar comuniquese con el admin')
+        this.getAll()
+      }
+    })
+  }
+
 }

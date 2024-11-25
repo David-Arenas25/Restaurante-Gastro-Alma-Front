@@ -1,47 +1,27 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lista de Bebidas</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body class="bg-gray-100 p-6">
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Platos</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-6">
     <div class="container mx-auto">
-      <h1 class="text-3xl font-bold mb-6">Menú de Bebidas</h1>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <h1 class="text-3xl font-bold mb-6">Menú de Platos</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @for (drink of drinks(); track $index) {
-        <div class="bg-white p-6 rounded-lg shadow-lg">
-          <h2 class="text-xl font-bold mb-2">{{ drink.drinkName }}</h2>
-          <p class="text-gray-700 mb-4">{{ drink.drinkDescription }}</p>
-          <p class="text-gray-900 font-bold mb-4">
-            ${{ drink.drinkPrice.toFixed(2) }}
-          </p>
-          <label
-            class="block text-gray-700 text-sm font-bold mb-2"
-            >Cantidad:</label
-          >
-          <input
-          [formControl]="quantity"
-            type="number"
-            id="quantity-{{ drink.drinkId }}"
-            name="quantity"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-          <button
-          (click)="saveOrder(drink)"
-            class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Añadir
-          </button>
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-xl font-bold mb-2">{{ drink.drinkName }}</h2>
+                <p class="text-gray-700 mb-4">{{ drink.drinkDescription }}</p>
+                <p class="text-gray-900 font-bold mb-4">${{ drink.drinkPrice.toFixed(2) }}</p>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Cantidad:</label>
+                <input (blur)="setQuantity(quantity.value || '', $index)" [formControl]="quantity" type="number" name="quantity" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+        }
         </div>
-      }
-      </div>
+        <button (click)="saveDrinkOrder()" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Añadir</button>
+
     </div>
-  </body>
+</body>
 </html>
-  

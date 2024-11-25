@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
   <h1 class="text-4xl font-bold text-center text-indigo-600 my-4">
@@ -39,9 +40,9 @@
      
     @for (order of filterView(); track $index) {
       <ul class="flex justify-center space-x-4 mt-8">
-        <li><a (click)="showingDrinks(order.orderId)"class="px-4 py-2 text-blue-500 border border-gray-300 rounded hover:bg-gray-200">Bebidas</a></li>
-        <li><a (click)="showingDishes(order.orderId)" class="px-4 py-2 text-blue-500 border border-gray-300 rounded hover:bg-gray-200">Platos</a></li>
-        <li><a (click)="showingWaiters(order.orderId)" class="px-4 py-2 text-blue-500 border border-gray-300 rounded hover:bg-gray-200">Meseros</a></li>
+        <li><a (click)="showingDrinks(order.orderId)"class="px-4 py-2 text-blue-500 border border-gray-300 rounded hover:bg-gray-200">Ordenar</a></li>
+        <li><a (click)="showingDishes(order.orderId)" class="px-4 py-2 text-blue-500 border border-gray-300 rounded hover:bg-gray-200">Pedido Actual</a></li>
+        <li><a (click)="showingWaiters(order.orderId)" class="px-4 py-2 text-blue-500 border border-gray-300 rounded hover:bg-gray-200">Mesero</a></li>
     </ul>
       <div class="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 shadow-lg rounded-lg p-6 mb-4">
         <h2 class="text-2xl font-extrabold mb-4 text-white">Detalles del Pedido</h2>
@@ -61,7 +62,7 @@
       @if (activePaymentId === order.orderId) {<form class="bg-white p-6 rounded-lg shadow-lg">
         <div class="mb-4">
             <label for="number" class="block text-gray-700 text-sm font-bold mb-2">Efectivo</label>
-            <input [formControl]="quantity" type="number" id="number" name="number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Ingresa un número">
+            <input [formControl]="quantity" type="number" id="number" name="number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Efectivo">
         </div>
         <div class="flex items-center justify-between">
             <button (click)="pay(order.orderId)" type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
@@ -69,13 +70,20 @@
             </button>
         </div>
     </form>}
-    @if (showDishes && oneOrder?.orderId  === order.orderId) {
-    <app-dish [order]="order"> </app-dish>   
-    <app-dishorder [orderIdItem]="order.orderId"/>
+    @if (showDishes && oneOrder?.orderId  === order.orderId) {  
+
+  
+          <app-drinkorder [drinkOrderId]="order.orderId"></app-drinkorder>
+  
+          <app-dishorder [orderIdItem]="order.orderId"></app-dishorder>
+      
+       
+      
+      
   }
   @if (showDrinks && oneOrder?.orderId === order.orderId) {
     <app-drink [orderId]="order.orderId"></app-drink>
-    <app-drinkorder [drinkOrderId]="order.orderId"></app-drinkorder>
+    <app-dish [order]="order"> </app-dish>
  
 
   }

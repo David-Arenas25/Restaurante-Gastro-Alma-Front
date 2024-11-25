@@ -16,7 +16,7 @@ export class DishComponent {
 
   dishes = signal<Dish[]>([])
   dishService = inject(DishService)
-  quantity = new FormControl(Validators.required)
+  quantity = new FormControl('',Validators.required)
   dishOrderService = inject(DishorderService)
   order = input.required<Order>()
   dishesId:number[] = []
@@ -34,16 +34,17 @@ export class DishComponent {
     })
   }
 
-  saveOrder(dishId:number){
+  saveOrder(dish:Dish){
     if(this.quantity.valid){
       const value = this.quantity.value
       if(value!==null){
     
-    this.dishOrderService.save(this.order().orderId,dishId,parseInt(value)).subscribe({
+    this.dishOrderService.save(this.order().orderId,dish.dishId,parseInt(value)).subscribe({
       next:(saved)=>{
         alert('se guardo')
-        this.quantity.setValue([])
-        this.getAll()        
+        this.quantity.setValue('')
+        this.getAll()
+        
       },error:(error)=>{
         alert('error al guardar la orden del platillo')
       }
@@ -53,6 +54,32 @@ export class DishComponent {
 }}
 
 
+saveDishOrder(){
+  this.dishes().forEach((dish)=>{
+
+    if(dish.quantity >0){
+      this.dishOrderService.save(this.order().orderId,dish.dishId,dish.quantity).subscribe({
+        next: (order)=>{
+          alert("orden guardada"+ order)
+        },error:(error)=>{
+          alert("error"+error)
+        }
+      })
+    }
+  })
 }
+
+setQuantity(quantity:string, index:number){
+ 
+  this.dishes()[index].quantity = parseInt(quantity)
+  console.log(this.dishes())
+
+
+}
+}
+
+ 
+
+
 
 

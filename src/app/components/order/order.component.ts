@@ -72,7 +72,7 @@ export default class OrderComponent {
         cambio:0}     
         const getWaiter = this.orderService.save(newOrder).subscribe({     
           next:(order)=>{
-            alert('orden guardada'+ order.orderId)
+            alert('orden guardada '+ order.orderId)
               this.getAll()
             },error:(error)=>{
                 alert('error su orden no se guardó'+error)

@@ -58,6 +58,28 @@ export class DrinkComponent {
 
   }
 }}
+
+
+saveDrinkOrder(){
+  let mensaje = ''
+  let contador = 0
+  this.drinks().forEach((drink)=>{
+    if(drink.quantity >0){
+      this.drinkOrderService.save(this.orderId(),drink.drinkId,drink.quantity).subscribe({
+        next: (order)=>{
+        },error:(error)=>{
+        
+        }
+      })
+    }
+  })
+}
+
+setQuantity(quantity:string, index:number){
+ 
+  this.drinks()[index].quantity = parseInt(quantity)
+  console.log(this.drinks())
+}
+}
   
 
-}
