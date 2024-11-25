@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { OrderService } from '../../service/order.service';
 import { Order } from '../../model/order.model';
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { DishComponent } from '../dish/dish.component';
 import { DrinkComponent } from "../drink/drink.component";
@@ -14,7 +14,7 @@ import { filter } from 'rxjs';
 @Component({
   selector: 'app-order',
   standalone: true,
-  imports: [DatePipe, ReactiveFormsModule, DishComponent, DrinkComponent,DrinkorderComponent,DishorderComponent,WaiterComponent],
+  imports: [DatePipe, ReactiveFormsModule, DishComponent, DrinkComponent,DrinkorderComponent,DishorderComponent,WaiterComponent,CurrencyPipe],
   templateUrl: './order.component.html',
   styleUrl: './order.component.css'
 })
@@ -72,22 +72,24 @@ export default class OrderComponent {
         cambio:0}     
         const getWaiter = this.orderService.save(newOrder).subscribe({     
           next:(order)=>{
-            alert('orden guardada '+ order.orderId)
+            // alert('orden guardada '+ order.orderId)
               this.getAll()
+              this.waiterId.setValue('')
             },error:(error)=>{
-                alert('error su orden no se guardó'+error)
+                // alert('error su orden no se guardó'+error)
               }
             }
       )
           } else{
-            alert('ingrese id de mesero por favor')
+            // alert('ingrese id de mesero por favor')
           }   
         }
       }
     
   deleteOrder(orderId:number){
     return this.orderService.delete(orderId).subscribe({
-      next: order => {alert('se borro' + orderId)
+      // next: order => {alert('se borro ' + orderId)
+      next : order => {
         this.getAll()
 
       }
@@ -158,16 +160,6 @@ export default class OrderComponent {
 }
 
   updatePrice(orderId: number) {
-
-    let idOrderCall = this.orderService.getById(orderId).subscribe({
-      next: (order) => {
-        this.order = order
-      }
-    })
-
-    if(this.order.status.toLocaleLowerCase() === 'cambio' || this.order.status.toLocaleLowerCase() === 'pagado' && this.order.total > 0){
-      this.order.status = 'pendiente'
-    }
     return this.orderService.calculateTotal(orderId).subscribe({
       next: (order) => {
 

@@ -47,12 +47,12 @@ export class DrinkComponent {
     
     this.drinkOrderService.save(this.orderId(),drink.drinkId,parseInt(value)).subscribe({
       next:(saved)=>{
-        alert('se guardo')
+        // alert('se guardo')
         this.quantity.setValue('')
         this.getAll()
         
       },error:(error)=>{
-        alert('error al guardar la orden del platillo')
+        // alert('error al guardar la orden del platillo')
       }
     })
 
@@ -67,6 +67,7 @@ saveDrinkOrder(){
     if(drink.quantity >0){
       this.drinkOrderService.save(this.orderId(),drink.drinkId,drink.quantity).subscribe({
         next: (order)=>{
+          this.quantity.setValue('')
         },error:(error)=>{
         
         }

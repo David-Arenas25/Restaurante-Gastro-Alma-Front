@@ -1,24 +1,24 @@
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
   @for (drinkOrder of drinkOrders(); track $index) {
     @if(drinkOrder.idPedido === drinkOrderId()) {
-      <div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6 rounded-xl shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-3xl hover:from-purple-600 hover:to-pink-600 relative group">
-        <p class="text-2xl font-semibold text-white mb-2">Nombre de bebida: 
-          <span class="text-yellow-200 font-bold">{{ drinkOrder.nombreBebida }}</span>
+      <div class="bg-gradient-to-r from-pink-400 via-purple-500 to-indigo-600 p-6 rounded-2xl shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-3xl relative group">
+        <p class="text-xl font-semibold text-white mb-2">Nombre de la Bebida: 
+          <span class="text-yellow-300 font-semibold">{{ drinkOrder.nombreBebida }}</span>
         </p>
-        <p class="text-xl text-gray-200 mb-4">Cantidad de bebida: 
-          <span class="text-green-300 font-semibold">{{ drinkOrder.quantity }}</span>
+        <p class="text-lg text-gray-100 mb-4">Cantidad de Bebida: 
+          <span class="text-teal-300 font-semibold">{{ drinkOrder.quantity }}</span>
         </p>
 
         <!-- Ícono de eliminar -->
         <button (click)="deleteDrinkOrder(drinkOrder.idBebida)" 
-                class="absolute top-2 right-2 text-white hover:text-red-500 transition-colors duration-300 group-hover:text-red-400 focus:outline-none z-10">
+                class="absolute top-3 right-3 text-white hover:text-red-400 transition-colors duration-300 group-hover:text-red-500 focus:outline-none z-10">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 6h18M19 6l-1 14H6L5 6z"></path>
           </svg>
         </button>
 
-        <!-- Agregar un sutil fondo de transición en hover -->
-        <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-30 transition-opacity duration-300 rounded-xl"></div>
+        <!-- Fondo de transición sutil -->
+        <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-2xl"></div>
       </div>
     }
   }

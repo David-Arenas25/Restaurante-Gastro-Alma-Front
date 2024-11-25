@@ -7,69 +7,98 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <h1 class="text-4xl font-bold text-center text-indigo-600 my-4">
+  <h1 class="text-5xl font-extrabold text-center text-indigo-700 my-6 drop-shadow-lg">
     Gestión de Pedidos
-  </h1>
-  <div class="container mx-auto p-4">
-    <form  class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
-      <div class="mb-4">
-        <label for="orderId" class="block text-gray-800 text-sm font-semibold mb-2">Buscar Pedido por ID:</label>
-        <input (keydown)="changeFilter('id')" [formControl]="orderId" type="number" id="orderId" name="orderId" required
-               class="shadow appearance-none border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500">
-      </div>
-      <div class="flex items-center justify-between">
-        <button (click)="changeFilter('date')" type="button" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          Hoy
-        </button>
-      </div>
-    </form>
-    
-    <form  class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
-      <div class="mb-4">
-        <label for="waiterId" class="block text-gray-800 text-sm font-semibold mb-2">Crear Pedido con ID de Mesero:</label>
-        <input [formControl]="waiterId" type="number" id="waiterId"  name="waiterId" required
-               class="shadow appearance-none border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-teal-500">
-      </div>
-      <div class="flex items-center justify-between">
-        <button (click)="saveOrder()" type="button" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
-          Crear
-        </button>
-        
-      </div>
-    </form>
-     
-    @for (order of filterView(); track $index) {
-      <ul class="flex justify-center space-x-4 mt-8">
-        <li><a (click)="showingDrinks(order.orderId)"class="px-4 py-2 text-blue-500 border border-gray-300 rounded hover:bg-gray-200">Ordenar</a></li>
-        <li><a (click)="showingDishes(order.orderId)" class="px-4 py-2 text-blue-500 border border-gray-300 rounded hover:bg-gray-200">Pedido Actual</a></li>
-        <li><a (click)="showingWaiters(order.orderId)" class="px-4 py-2 text-blue-500 border border-gray-300 rounded hover:bg-gray-200">Mesero</a></li>
-    </ul>
-      <div class="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 shadow-lg rounded-lg p-6 mb-4">
-        <h2 class="text-2xl font-extrabold mb-4 text-white">Detalles del Pedido</h2>
-        <div class="text-white">
-          <p><span class="font-semibold">ID del Pedido:</span> {{ order.orderId }}</p>
-          <p><span class="font-semibold">Fecha del Pedido:</span> {{ order.orderDate | date:'dd/MM/yyyy HH:mm' }}</p>
-          <p><span class="font-semibold">Estado:</span> <span class="text-yellow-300">{{ order.status }}</span></p>
-          <p><span class="font-semibold">Total:</span> <span class="text-green-300">${{ order.total }}</span></p>
-          <p><span class="font-semibold">ID del Camarero:</span> {{ order.waiterId }}</p>
-        </div>
-        <div class="mt-4 flex space-x-4">
-          <button (click)="updatePrice(order.orderId)" (click)="activeOrderPayment(order.orderId)" class="bg-green-500 text-white py-2 px-4 rounded-full hover:bg-green-600">
-            Facturar
-          </button>
-          <button (click)="deleteOrder(order.orderId)" type="button" class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Red</button></div>
-      </div> 
-      @if (activePaymentId === order.orderId) {<form class="bg-white p-6 rounded-lg shadow-lg">
-        <div class="mb-4">
-            <label for="number" class="block text-gray-700 text-sm font-bold mb-2">Efectivo</label>
-            <input [formControl]="quantity" type="number" id="number" name="number" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Efectivo">
+</h1>
+
+<div class="container mx-auto p-6">
+    <form class="bg-white shadow-2xl rounded-lg px-10 pt-8 pb-10 mb-6 transition-all duration-300 ease-in-out hover:shadow-2xl">
+        <div class="mb-6">
+            <label for="orderId" class="block text-gray-800 text-sm font-semibold mb-3">Buscar Pedido por ID:</label>
+            <input (keydown)="changeFilter('id')" [formControl]="orderId" type="number" id="orderId" name="orderId" required
+                class="shadow-lg appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 ease-in-out">
         </div>
         <div class="flex items-center justify-between">
-            <button (click)="pay(order.orderId)" type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Pagar
+            <button (click)="changeFilter('date')" type="button" 
+                class="bg-indigo-600 hover:bg-indigo-800 text-white font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300 ease-in-out">
+                Hoy
             </button>
         </div>
-    </form>}
+    </form>
+    
+    <form class="bg-white shadow-2xl rounded-lg px-10 pt-8 pb-10 mb-6 transition-all duration-300 ease-in-out hover:shadow-2xl">
+        <div class="mb-6">
+            <label for="waiterId" class="block text-gray-800 text-sm font-semibold mb-3">Crear Pedido con ID de Mesero:</label>
+            <input [formControl]="waiterId" type="number" id="waiterId" name="waiterId" required
+                class="shadow-lg appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-300 ease-in-out">
+        </div>
+        <div class="flex items-center justify-between">
+            <button (click)="saveOrder()" type="button" 
+                class="bg-teal-600 hover:bg-teal-800 text-white font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition duration-300 ease-in-out">
+                Crear
+            </button>
+        </div>
+    </form>     
+    @for (order of filterView(); track $index) {
+      <ul class="flex justify-center space-x-6 mt-8">
+        <li>
+            <a (click)="showingDrinks(order.orderId)" 
+               class="px-6 py-3 text-white bg-gradient-to-r from-indigo-500 to-blue-500 border border-transparent rounded-lg shadow-lg hover:from-indigo-600 hover:to-blue-600 transition duration-300">
+               Ordenar
+            </a>
+        </li>
+        <li>
+            <a (click)="showingDishes(order.orderId)" 
+               class="px-6 py-3 text-white bg-gradient-to-r from-green-500 to-teal-500 border border-transparent rounded-lg shadow-lg hover:from-green-600 hover:to-teal-600 transition duration-300">
+               Pedido Actual
+            </a>
+        </li>
+        <li>
+            <a (click)="showingWaiters(order.orderId)" 
+               class="px-6 py-3 text-white bg-gradient-to-r from-yellow-500 to-orange-500 border border-transparent rounded-lg shadow-lg hover:from-yellow-600 hover:to-orange-600 transition duration-300">
+               Mesero
+            </a>
+        </li>
+    </ul>
+    
+    <div class="bg-gradient-to-r from-purple-500 via-pink-600 to-red-600 shadow-2xl rounded-xl p-8 mb-6">
+        <h2 class="text-3xl font-extrabold mb-5 text-white drop-shadow-md">Detalles del Pedido</h2>
+        <div class="text-white text-lg">
+            <p><span class="font-semibold">ID del Pedido:</span> {{ order.orderId }}</p>
+            <p><span class="font-semibold">Fecha del Pedido:</span> {{ order.orderDate | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p><span class="font-semibold">Estado:</span> <span class="text-yellow-300">{{ order.status }}</span></p>
+            <p><span class="font-semibold">Total:</span> <span class="text-green-300">{{ order.total | currency:'USD' }}</span></p>
+            <p><span class="font-semibold">ID del Camarero:</span> {{ order.waiterId }}</p>
+        </div>
+        <div class="mt-6 flex space-x-6">
+            <button (click)="updatePrice(order.orderId)" (click)="activeOrderPayment(order.orderId)" 
+                class="bg-green-600 text-white py-3 px-6 rounded-lg shadow-xl hover:bg-green-700 transition duration-300">
+                Facturar
+            </button>
+            <button (click)="deleteOrder(order.orderId)" type="button" 
+                class="text-white bg-gradient-to-r from-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-3 text-center transition duration-300">
+            Eliminar
+            </button>
+        </div>
+    </div>
+    
+    @if (activePaymentId === order.orderId) {
+        <form class="bg-white p-8 rounded-lg shadow-2xl">
+            <div class="mb-6">
+                <label for="number" class="block text-gray-700 text-sm font-bold mb-3">Efectivo</label>
+                <input [formControl]="quantity" type="number" id="number" name="number" 
+                    class="shadow-lg appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                    placeholder="Efectivo">
+            </div>
+            <div class="flex items-center justify-between">
+                <button (click)="pay(order.orderId)" type="button" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Pagar
+                </button>
+            </div>
+        </form>
+    }
+    
     @if (showDishes && oneOrder?.orderId  === order.orderId) {  
 
   

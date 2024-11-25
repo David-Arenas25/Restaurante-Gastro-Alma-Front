@@ -1,10 +1,12 @@
-<div class="space-y-4">
-    @for (waiter of waiters(); track $index) {
-      @if (waiter.waiterId === waiterId()) {
-      <div class="p-6 border border-gray-300 rounded-lg shadow-lg bg-white">
-        <p class="text-xs text-gray-400">ID: {{waiter.waiterId}}</p>
-        <p class="text-xl font-bold text-gray-700">{{waiter.waiterName}} {{waiter.waiterLastName}}</p>
+<div class="space-y-6">
+  @for (waiter of waiters(); track $index) {
+    @if (waiter.waiterId === waiterId()) {
+      <div class="p-6 border border-gray-200 rounded-lg shadow-lg hover:shadow-xl bg-gradient-to-r from-white via-gray-50 to-gray-100 transition-shadow duration-300">
+        <p class="text-sm text-gray-500">ID: {{waiter.waiterId}}</p>
+        <p class="text-2xl font-semibold text-gray-800 hover:text-indigo-600 transition-colors duration-300">
+          {{waiter.waiterName}} {{waiter.waiterLastName}}
+        </p>
       </div>
     }
   }
-  </div>
+</div>

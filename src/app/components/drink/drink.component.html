@@ -3,25 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Platos</title>
+    <title>Lista de Bebidas</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
-<body class="bg-gray-100 p-6">
+<body class="bg-gradient-to-r from-teal-50 via-cyan-50 to-blue-50 min-h-screen p-10">
     <div class="container mx-auto">
-        <h1 class="text-3xl font-bold mb-6">Menú de Platos</h1>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Título principal -->
+        <h1 class="text-5xl font-extrabold text-gray-800 text-center mb-12 tracking-wide">
+            🍹 Menú de Bebidas
+        </h1>
+        
+        <!-- Contenedor de Tarjetas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            <!-- Iteración de las bebidas -->
             @for (drink of drinks(); track $index) {
-            <div class="bg-white p-6 rounded-lg shadow-lg">
-                <h2 class="text-xl font-bold mb-2">{{ drink.drinkName }}</h2>
-                <p class="text-gray-700 mb-4">{{ drink.drinkDescription }}</p>
-                <p class="text-gray-900 font-bold mb-4">${{ drink.drinkPrice.toFixed(2) }}</p>
-                <label class="block text-gray-700 text-sm font-bold mb-2">Cantidad:</label>
-                <input (blur)="setQuantity(quantity.value || '', $index)" [formControl]="quantity" type="number" name="quantity" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <div class="relative bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-2xl transform hover:-translate-y-3 transition-all duration-300 group">
+                <!-- Borde Animado -->
+                <div class="absolute inset-0 border-2 border-transparent rounded-xl group-hover:border-teal-400 transition duration-300 pointer-events-none"></div>
+                
+                <!-- Contenido de la Bebida -->
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                    {{ drink.drinkName }}
+                </h2>
+                <p class="text-gray-600 mb-4">
+                    {{ drink.drinkDescription }}
+                </p>
+                <!-- <p class="text-xl font-semibold text-purple-600 mb-4">
+                    ${{ drink.drinkPrice.toFixed(2) }}
+                </p> -->
+                
+                <!-- Campo de Cantidad -->
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Cantidad:
+                </label>
+                <input 
+                    (blur)="setQuantity(quantity.value || '', $index)" 
+                    [formControl]="quantity" 
+                    type="number" 
+                    name="quantity" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none focus:border-teal-500 shadow-sm"
+                    placeholder="Ingresa cantidad">
+                
+                <!-- Icono Decorativo -->
+                <div class="absolute top-3 right-3 text-gray-300 group-hover:text-teal-500 transition duration-300">
+                    <i class="fas fa-cocktail fa-2x"></i>
+                </div>
             </div>
-        }
+            }
         </div>
-        <button (click)="saveDrinkOrder()" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Añadir</button>
-
+        
+        <!-- Botón Principal -->
+        <div class="text-center mt-12">
+            <button 
+                (click)="saveDrinkOrder()" 
+                class="relative inline-flex items-center px-8 py-4 bg-gradient-to-r from-teal-500 to-cyan-600 text-white font-bold text-lg rounded-full shadow-lg hover:shadow-xl hover:from-teal-600 hover:to-cyan-700 transform hover:scale-105 transition-all duration-300">
+                <span class="absolute left-0 w-3 h-3 bg-teal-400 rounded-full transform -translate-x-1/2 -translate-y-1/2 group-hover:animate-ping"></span>
+                <i class="fas fa-plus mr-2"></i> Añadir Bebida
+            </button>
+        </div>
     </div>
 </body>
 </html>

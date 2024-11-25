@@ -41,12 +41,12 @@ export class DishComponent {
     
     this.dishOrderService.save(this.order().orderId,dish.dishId,parseInt(value)).subscribe({
       next:(saved)=>{
-        alert('se guardo')
+        // alert('se guardo')
         this.quantity.setValue('')
         this.getAll()
         
       },error:(error)=>{
-        alert('error al guardar la orden del platillo')
+        // alert('error al guardar la orden del platillo')
       }
     })
 
@@ -60,9 +60,10 @@ saveDishOrder(){
     if(dish.quantity >0){
       this.dishOrderService.save(this.order().orderId,dish.dishId,dish.quantity).subscribe({
         next: (order)=>{
-          alert("orden guardada"+ order)
+          // alert("orden guardada"+ order)
+          this.quantity.setValue('')
         },error:(error)=>{
-          alert("error"+error)
+          // alert("error"+error)
         }
       })
     }

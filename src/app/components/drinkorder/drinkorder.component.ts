@@ -55,10 +55,10 @@ quantity(orderId: number, drinkId: number) {
 deleteDrinkOrder(orderId:number){
   this.drinkOrderService.delete(orderId).subscribe({
     next: (deleteOrder) =>{
-      alert('se borro' + deleteOrder)
+      // alert('se borro' + deleteOrder)
       this.getAll()
     },error: (error)=>{
-      alert("borrado")
+      // alert("borrado")
       this.getAll()
     }
   })
