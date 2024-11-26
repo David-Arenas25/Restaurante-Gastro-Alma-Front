@@ -49,13 +49,7 @@ export default class OrderComponent {
   }
 
   changeFilter(filter:string){
-    
-    
-    if(this.state() === filter){
-      this.state.set('todos')
-    }else{
-      this.state.set(filter)
-    }
+    this.state.set(filter) 
   }
 
   saveOrder() {
