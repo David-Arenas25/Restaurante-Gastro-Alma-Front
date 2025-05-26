@@ -21,40 +21,39 @@ export class DishorderComponent {
     this.getAll()
 
   }
-
   getAll() {
     this.dishOrderService.viewDishOrders().subscribe({
-      next: orders => {
-        this.dishOrders.set(orders);
-        this.dishOrders().forEach(dishOrder => {
-          if (dishOrder.idPedido === this.orderIdItem()) {
-            this.quantity(this.orderIdItem(), dishOrder.idPlato); // Llamada a la función quantity para cada plato
-          }
-        }); 
-      },
-      error: error => console.error('Error:', error)
-    });
-  }
+      next: (dishOrders) => {
+        dishOrders.forEach((dishOrder) => {
+          console.log(dishOrders,'orders')
+        this.dishOrders.set(dishOrders)
+        })
+        
+      }})}
 
-  quantity(orderId: number, drinkId: number) {
-    this.dishOrderService.quantity(orderId, drinkId).subscribe({
+
+quantity() {
+  
+  this.dishOrders().forEach((drinkOrders:DishOrderAll) => {
+    this.dishOrderService.quantity(drinkOrders.orderId, drinkOrders.dishId).subscribe({
       next: (quantity) => {
-        this.dishOrders().forEach(element => {
-          if (element.idPlato === drinkId) {
-            element.quantity = quantity;
-          }
-        });
+        drinkOrders.quantity = quantity;
+              }
       }
-    });
-  }
+  )})
 
-  deleteDishOrder(orderId:number){
-    this.dishOrderService.delete(orderId).subscribe({
+}
+
+  deleteDishOrder(orderId:number,dishId:number){
+    console.log(this.dishOrders(),'oe')
+    this.dishOrderService.delete(orderId,dishId).subscribe({
       next: (deleteOrder) =>{
+        this.getAll()
+        this.quantity()
         // alert('se borro')
       },error: (error)=>{
         // alert('error al borrar comuniquese con el admin')
-        this.getAll()
+        
       }
     })
   }

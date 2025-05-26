@@ -1,8 +1,8 @@
 export interface DrinkOrderAll {
-    nombreBebida: string;
+    drinkName: string;
     quantity:number
-    idPedido: number
-    idBebida: number
+    orderId: number
+    drinkId: number
     
     
 

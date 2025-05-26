@@ -25,35 +25,35 @@ export default class DrinkorderComponent {
 
   getAll() {
     this.drinkOrderService.viewDrinkOrders().subscribe({
-      next: orders => {
-        this.drinkOrders.set(orders);
-        this.drinkOrders().forEach(dishOrder => {
-          if (dishOrder.idPedido === this.drinkOrderId()) {
-            this.quantity(this.drinkOrderId(), dishOrder.idBebida); // Llamada a la función quantity para cada plato
+      next: (drinkOrders) => { 
+        const array:DrinkOrderAll[] = []
+        drinkOrders.forEach((drinkOrder) => {
+          if(!array.find(order => order.orderId === drinkOrder.orderId && order.drinkId === drinkOrder.drinkId)){
+            array.push(drinkOrder)
           }
-        });
-      },
-      error: error => console.error('Error:', error)
-    });
-  }
+          
+    })
+          this.quantity()
+          this.drinkOrders.set(array)
+          
+  }})}
+
+
+quantity() {
   
+  this.drinkOrders().forEach((drinkOrders:DrinkOrderAll) => {
+    this.drinkOrderService.quantity(drinkOrders.orderId, drinkOrders.drinkId).subscribe({
+      next: (quantity) => {
+        drinkOrders.quantity = quantity;
+              }
+      }
+  )})
 
-
-quantity(orderId: number, drinkId: number) {
-  this.drinkOrderService.quantity(orderId, drinkId).subscribe({
-    next: (quantity) => {
-      this.drinkOrders().forEach(element => {
-        if (element.idBebida === drinkId) {
-          element.quantity = quantity;
-           // Aquí asignamos la cantidad a todas las bebidas con el mismo idBebida
-        }
-      });
-    }
-  });
 }
 
-deleteDrinkOrder(orderId:number){
-  this.drinkOrderService.delete(orderId).subscribe({
+
+deleteDrinkOrder(orderId:number,drinkId:number){
+  this.drinkOrderService.delete(orderId,drinkId).subscribe({
     next: (deleteOrder) =>{
       // alert('se borro' + deleteOrder)
       this.getAll()

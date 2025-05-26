@@ -17,12 +17,12 @@ export class DishorderService extends BasehttpService {
     return this.http.post<DishOrder>(`${this.API_URL}/dishorders/save?orderId=${orderId}&dishId=${dishId}&quantity=${quantity}`,{});
   }
 
-  quantity(orderId:number, dishId:number){
-    return this.http.get<number>(`${this.API_URL}/dishorders/quantity/?idPedido=${orderId}&idBebida=${dishId}`)
-   }
+ quantity(orderId: number, dishId: number) {
+    return this.http.post<number>(`${this.API_URL}/dishorders********/quantity?p_id_pedido=${orderId}&p_id_plato=${dishId}`, {});
+}
 
-   delete(id:number){
-    return this.http.delete(`${this.API_URL}/dishorders/delete?id=${id}`)  
+   delete(orderId:number,dishId:number){
+    return this.http.delete(`${this.API_URL}/dishorders/delete?orderId=${orderId}&dishId=${dishId}`);  
    }
 
 }

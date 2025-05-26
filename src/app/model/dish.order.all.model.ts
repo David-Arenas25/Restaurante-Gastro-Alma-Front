@@ -1,7 +1,7 @@
 export interface DishOrderAll {
-    nombrePlato: string;
-    idPlato:number
-    idPedido:number
+    dishName: string;
+    dishId:number
+    orderId:number
     quantity:number
     
     

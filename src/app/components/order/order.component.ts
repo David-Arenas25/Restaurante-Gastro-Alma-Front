@@ -33,20 +33,18 @@ export default class OrderComponent {
   state = signal('todos')
   waiterId = new FormControl('')
 
-
   ngOnInit(){
     this.getAll()
  
   }
-  ngOnChanges(){
-    this.getAll()
-  }
-
   getById(orderId:number){
-    return this.orderService.getById(orderId).subscribe({
-      next: (order) => this.oneOrder = order
+    if(orderId){
+    this.orderService.getById(orderId).subscribe({
+      next: (order) => {this.oneOrder = order
+      this.updatePrice(this.oneOrder!.orderId)}
     })
-  }
+    
+  }}
 
   changeFilter(filter:string){
     this.state.set(filter) 
@@ -137,8 +135,12 @@ export default class OrderComponent {
       if(quantityValue !== null){
     this.orderService.pay(parseInt(quantityValue),orderId).subscribe({
       next: (payment) => {console.log('pago correcto')
-      this.getAll()
+    
       this.quantity.setValue('')
+      this.getAll()
+       
+      
+      
       }
     })
   }
@@ -155,15 +157,18 @@ export default class OrderComponent {
 
   updatePrice(orderId: number) {
     return this.orderService.calculateTotal(orderId).subscribe({
-      next: (order) => {
-
-        console.log('orden registrada correctamente')
+      next: total => {
         this.getAll()
+
+      }
+    })
+        
+        
       }
 
-    })
-  }
+    
   
+
 
   
   filterView() {

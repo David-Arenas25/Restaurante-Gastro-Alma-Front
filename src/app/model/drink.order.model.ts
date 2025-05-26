@@ -1,5 +1,5 @@
 export interface DrinkOrder{
-    dishId:number
+    drinkId:number
     orderId:number
     quantity:number
 
