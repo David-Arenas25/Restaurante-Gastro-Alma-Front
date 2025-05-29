@@ -1,12 +1,54 @@
 <div class="space-y-6">
-  @for (waiter of waiters(); track $index) {
-    @if (waiter.waiterId === waiterId()) {
-      <div class="p-6 border border-gray-200 rounded-lg shadow-lg hover:shadow-xl bg-gradient-to-r from-white via-gray-50 to-gray-100 transition-shadow duration-300">
-        <p class="text-sm text-gray-500">ID: {{waiter.waiterId}}</p>
-        <p class="text-2xl font-semibold text-gray-800 hover:text-indigo-600 transition-colors duration-300">
-          {{waiter.waiterName}} {{waiter.waiterLastName}}
-        </p>
-      </div>
+    <!-- Encabezado de la sección -->
+    <div class="border-b border-gray-200 pb-4 mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Información del Mesero</h2>
+        <p class="text-gray-600">Detalles del mesero asignado al pedido</p>
+    </div>
+
+    <!-- Tarjeta del mesero -->
+    @for (waiter of waiters(); track $index) {
+        @if (waiter.waiterId === waiterId()) {
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-2xl">
+                <div class="p-6 relative">
+                    <!-- Avatar placeholder -->
+                    <div class="absolute right-6 top-6">
+                        <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                    </div>
+
+                    <!-- Información del mesero -->
+                    <div class="pr-20">
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-sm text-indigo-600 font-semibold">ID: #{{waiter.waiterId}}</p>
+                                <h3 class="text-2xl font-bold text-gray-800 mt-1">
+                                    {{waiter.waiterName}} {{waiter.waiterLastName}}
+                                </h3>
+                            </div>
+
+                            <!-- Detalles adicionales -->
+                            <div class="flex space-x-4 text-gray-600">
+                                <span class="flex items-center">
+                                    <i class="fas fa-id-badge mr-2 text-indigo-500"></i>
+                                    Mesero activo
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barra decorativa -->
+                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+                </div>
+            </div>
+        }
     }
-  }
+
+    <!-- Mensaje si no hay meseros -->
+    @if (waiters().length === 0) {
+        <div class="text-center py-8 text-gray-500">
+            <i class="fas fa-user-slash text-4xl mb-3"></i>
+            <p>No se encontró información del mesero</p>
+        </div>
+    }
 </div>

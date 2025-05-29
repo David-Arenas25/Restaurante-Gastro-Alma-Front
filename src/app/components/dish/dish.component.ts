@@ -4,11 +4,12 @@ import { Dish } from '../../model/dish.model';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DishorderService } from '../../service/dishorder.service';
 import { Order } from '../../model/order.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-dish',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './dish.component.html',
   styleUrl: './dish.component.css'
 })
@@ -20,6 +21,8 @@ export class DishComponent {
   dishOrderService = inject(DishorderService)
   order = input.required<Order>()
   dishesId:number[] = []
+  
+  alerta = false;
 
 
   ngOnInit(){
@@ -42,23 +45,23 @@ export class DishComponent {
     this.dishOrderService.save(this.order().orderId,dish.dishId,parseInt(value)).subscribe({
       next:(saved)=>{
         // alert('se guardo')
+        setTimeout(() => {
+          this.alerta = true
+        }, 2000);
         this.quantity.setValue('')
         this.getAll()
         
       },error:(error)=>{
-        // alert('error al guardar la orden del platillo')
-      }
+        // alert('error al guardar')
+        this.alerta = false;}
     })
 
   }
 }}
 
 
-saveDishOrder(){
-  this.dishes().forEach((dish)=>{
-
-    if(dish.quantity >0){
-      this.dishOrderService.save(this.order().orderId,dish.dishId,dish.quantity).subscribe({
+saveDishOrder(dishId:number){
+      this.dishOrderService.save(this.order().orderId,dishId,1).subscribe({
         next: (order)=>{
           // alert("orden guardada"+ order)
           this.quantity.setValue('')
@@ -67,17 +70,11 @@ saveDishOrder(){
         }
       })
     }
-  })
-}
-
-setQuantity(quantity:string, index:number){
- 
-  this.dishes()[index].quantity = parseInt(quantity)
-  console.log(this.dishes())
+  }
 
 
-}
-}
+
+
 
  
 

@@ -14,11 +14,11 @@ export class OrderService extends BasehttpService {
   }
 
   pay(total:number,orderId:number){
-    return this.http.get(`${this.API_URL}/orders/pagar?total=${total}&orderId=${orderId}`,{})
+    return this.http.get<Order>(`${this.API_URL}/orders/pagar?total=${total}&orderId=${orderId}`,{})
    }
 
   calculateTotal(id:number){
-    return this.http.get(`${this.API_URL}/orders/total?id=${id}`,{})
+    return this.http.get<number>(`${this.API_URL}/orders/total?id=${id}`,{})
    }
 
    

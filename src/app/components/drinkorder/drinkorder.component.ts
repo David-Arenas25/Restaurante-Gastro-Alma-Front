@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { DrinkorderService } from '../../service/drinkorder.service';
 import { DrinkOrderAll } from '../../model/drink.order.all.model';
 import { CommonModule } from '@angular/common';
@@ -19,24 +19,34 @@ export default class DrinkorderComponent {
   drinkId!:number
   drinkOrderId = input.required<number>()
 
+  filteredOrders = computed(() => 
+    this.drinkOrders().filter(order => order.orderId === this.drinkOrderId())
+  )
+  
+  hasOrders = computed(() => this.filteredOrders().length > 0)
+
   ngOnInit() {  
       this.getAll();      
   }
-
-  getAll() {
-    this.drinkOrderService.viewDrinkOrders().subscribe({
-      next: (drinkOrders) => { 
-        const array:DrinkOrderAll[] = []
-        drinkOrders.forEach((drinkOrder) => {
-          if(!array.find(order => order.orderId === drinkOrder.orderId && order.drinkId === drinkOrder.drinkId)){
-            array.push(drinkOrder)
-          }
-          
-    })
-          this.quantity()
-          this.drinkOrders.set(array)
-          
-  }})}
+getAll() {
+  this.drinkOrderService.viewDrinkOrders().subscribe({
+    next: (drinkOrders) => {
+      console.log('Pedidos de bebidas obtenidos:', drinkOrders);
+      // Filtra para que solo quede un pedido por drinkName
+      const uniqueOrders: DrinkOrderAll[] = [];
+      drinkOrders.forEach((order) => {
+        if (!uniqueOrders.find(u => u.drinkName === order.drinkName)) {
+          uniqueOrders.push(order);
+        }
+      });
+      this.drinkOrders.set(uniqueOrders); // Actualiza la señal
+      this.quantity(); // Llama después de actualizar los datos
+    },
+    error: (err) => {
+      console.error('Error al obtener pedidos de bebidas', err);
+    }
+  });
+}
 
 
 quantity() {

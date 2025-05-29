@@ -60,12 +60,9 @@ export class DrinkComponent {
 }}
 
 
-saveDrinkOrder(){
-  let mensaje = ''
-  let contador = 0
-  this.drinks().forEach((drink)=>{
-    if(drink.quantity >0){
-      this.drinkOrderService.save(this.orderId(),drink.drinkId,drink.quantity).subscribe({
+saveDrinkOrder(drinkId:number){
+  
+      this.drinkOrderService.save(this.orderId(),drinkId,1).subscribe({
         next: (order)=>{
           this.quantity.setValue('')
         },error:(error)=>{
@@ -73,14 +70,8 @@ saveDrinkOrder(){
         }
       })
     }
-  })
-}
+  
 
-setQuantity(quantity:string, index:number){
- 
-  this.drinks()[index].quantity = parseInt(quantity)
-  console.log(this.drinks())
-}
 }
   
 

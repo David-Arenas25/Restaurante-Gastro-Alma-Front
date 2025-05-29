@@ -1,25 +1,37 @@
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
-  @for (dishOrder of dishOrders(); track $index) {
-    @if(dishOrder.orderId === orderIdItem()) {
-      <div class="bg-gradient-to-r from-teal-100 via-teal-200 to-teal-300 p-6 rounded-xl shadow-xl transform transition-all duration-300 hover:scale-105 hover:shadow-2xl relative group">
-        <p class="text-xl font-semibold text-gray-800 mb-2">Nombre de Plato: 
-          <span class="text-indigo-600 font-semibold">{{ dishOrder.dishName }}</span>
-        </p>
-        <p class="text-lg text-gray-600 mb-4">Cantidad de Plato: 
-          <span class="text-teal-500 font-semibold">{{ dishOrder.quantity }}</span>
-        </p>
+<div class="mb-8">
+    <h3 class="text-xl font-semibold text-gray-900 mb-4">Platos Ordenados</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        @if (!hasOrders()) {
+            <div class="col-span-full text-center p-6 bg-gray-50 rounded-lg border border-gray-200">
+                <p class="text-gray-600">No hay platos ordenados para esta orden</p>
+            </div>
+        } @else {
+            @for (dishOrder of filteredOrders(); track $index) {
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 relative group hover:shadow-md transition-all duration-300">
+                    <!-- Contenido del Pedido -->
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h4 class="text-lg font-medium text-gray-900">
+                                {{ dishOrder.dishName }}
+                            </h4>
+                            <div class="mt-2 flex items-center text-sm text-gray-500">
+                                <i class="fas fa-hashtag mr-1"></i>
+                                <span>Cantidad: {{ dishOrder.quantity }}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Botón de Eliminar -->
+                        <button 
+                            (click)="deleteDrinkOrder(dishOrder.orderId, dishOrder.dishId)"
+                            class="text-gray-400 hover:text-red-500 transition-colors duration-300">
+                            <i class="fas fa-times-circle text-xl"></i>
+                        </button>
+                    </div>
 
-        <!-- Ícono de eliminar -->
-        <button (click)="deleteDishOrder(dishOrder.orderId, dishOrder.dishId)" 
-                class="absolute top-2 right-2 text-gray-700 hover:text-red-500 transition-colors duration-300 group-hover:text-red-400 focus:outline-none z-10">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 6h18M19 6l-1 14H6L5 6z"></path>
-          </svg>
-        </button>
-
-        <!-- Fondo de transición sutil -->
-        <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-xl"></div>
-      </div>
-    }
-  }
+                    <!-- Barra de Progreso Decorativa -->
+                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                </div>
+            }
+        }
+    </div>
 </div>
