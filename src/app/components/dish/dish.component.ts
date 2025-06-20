@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, EventEmitter, inject, input, Output, signal } from '@angular/core';
 import { DishService } from '../../service/dish.service';
 import { Dish } from '../../model/dish.model';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -24,6 +24,7 @@ export class DishComponent {
   
   alerta = false;
 
+  @Output() updateTotal = new EventEmitter<number>();
 
   ngOnInit(){
     this.getAll()
@@ -63,20 +64,20 @@ export class DishComponent {
 saveDishOrder(dishId:number){
       this.dishOrderService.save(this.order().orderId,dishId,1).subscribe({
         next: (order)=>{
-          // alert("orden guardada"+ order)
           this.quantity.setValue('')
+          this.updateTotal.emit(this.order().orderId);
         },error:(error)=>{
           // alert("error"+error)
+          
         }
       })
-    }
-  }
+    }}
 
 
 
 
 
- 
+
 
 
 

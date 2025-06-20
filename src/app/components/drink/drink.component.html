@@ -5,55 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú de Bebidas</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Encabezado -->
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold text-gray-900">
+    <div class="max-w-full">
+        <!-- Header -->
+        <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
+            <h2 class="text-lg font-semibold text-gray-800">
                 Menú de Bebidas
-                <span class="block text-base font-normal text-gray-600 mt-2">Seleccione las bebidas para añadir al pedido</span>
+                <span class="block text-sm font-normal text-gray-500 mt-1">Seleccione las bebidas para agregar al pedido</span>
             </h2>
         </div>
 
-   
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-           
-            @for (drink of drinks(); track $index) {
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-blue-500">                <!-- Card completo clickeable -->
+        <!-- Grid de Bebidas -->
+        <div class="p-4">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                @for (drink of drinks(); track $index) {
                 <button 
                     (click)="saveDrinkOrder(drink.drinkId)"
-                    class="w-full text-left transition-transform duration-200 hover:scale-105">
-                    <!-- Imagen de la Bebida (placeholder) -->
-                    <div class="h-48 bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center">
-                        <i class="fas fa-glass-martini text-4xl text-purple-400"></i>
+                    class="bg-white rounded-lg border border-gray-200 hover:border-purple-400 hover:shadow-md transition-all duration-200 text-left overflow-hidden group">
+                    <!-- Icono de la Bebida -->
+                    <div class="h-24 bg-gray-50 flex items-center justify-center border-b border-gray-100 group-hover:bg-purple-50 transition-colors">
+                        <i class="fas fa-glass-martini-alt text-2xl text-gray-400 group-hover:text-purple-500 transition-colors"></i>
                     </div>
 
                     <!-- Información de la Bebida -->
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                    <div class="p-3">
+                        <h3 class="font-medium text-gray-900 truncate">
                             {{ drink.drinkName }}
                         </h3>
-                        <p class="text-gray-600 text-sm mb-4">
+                        <p class="text-sm text-gray-500 mt-1 line-clamp-2 h-10">
                             {{ drink.drinkDescription }}
                         </p>
-                        <p class="text-lg font-medium text-purple-600">
-                            ${{ drink.drinkPrice }}
-                        </p>
-                        
-                        <!-- Indicador de clic -->
-                        <div class="mt-4 text-sm text-gray-500">
-                            <i class="fas fa-hand-pointer mr-2"></i>
-                            Click para añadir
+                        <div class="mt-2 flex items-center justify-between">
+                            <span class="text-purple-600 font-semibold">
+                                ${{ drink.drinkPrice }}
+                            </span>
+                            <span class="text-xs text-gray-400 group-hover:text-purple-500">
+                                <i class="fas fa-plus-circle"></i>
+                            </span>
                         </div>
                     </div>
                 </button>
+                }
             </div>
-            }
-        </div>        <!-- Feedback para el usuario -->
-        <div class="mt-12 text-center text-gray-600">
-            <p class="text-sm">Haga clic en cualquier bebida para agregarla al pedido</p>
         </div>
     </div>
 </body>

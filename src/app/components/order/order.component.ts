@@ -36,15 +36,14 @@ export default class OrderComponent {
   showDishes = false;
   showDrinks = false;
   showWaiter = false;
+  showPayment = false;
   oneOrder!: Order 
   orderId = new FormControl('');
   state = signal('todos');
   waiterId = new FormControl('');
-  total = signal(0);
 
   ngOnInit() {
     this.getAll();
- 
   }
  getById(orderId: number) {
   if (orderId) {
@@ -52,9 +51,7 @@ export default class OrderComponent {
       next: (order) => {
        
           this.oneOrder = order
-          this.total.set(order.total);
-          this.updatePrice(orderId);
-                
+          this.updatePrice(orderId);  
           
          
 }})}}
@@ -97,7 +94,7 @@ export default class OrderComponent {
     return this.orderService.delete(orderId).subscribe({
       // next: order => {alert('se borro ' + orderId)
       next: (order) => {
- 
+        this.getAll();
       },
 
       error: (error) => {
@@ -106,39 +103,54 @@ export default class OrderComponent {
     });
   }
 
-  showingDrinks(order:Order) {
-    this.oneOrder = order
+  showingDrinks(orderId: number) {
+    if(this.showDrinks) {
+      return 
+    }
+    this.getById(orderId);
+    this.showPayment = false
     this.showDishes = false;
-    this.showDrinks = true;
+    this.showDrinks = !this.showDrinks;
     this.showWaiter = false;
   }
 
-  showingDishes(order:Order) {
-    this.oneOrder = order
-    this.showDishes = true;
+  showingDishes(orderId: number) {
+    if(this.showDishes) {
+      return 
+    }
+    this.getById(orderId);
+    this.showDishes = !this.showDishes;
     this.showDrinks = false;
     this.showWaiter = false;
+    this.showPayment = true;
+   
   }
-  showingWaiters(order: Order) {
-      this.oneOrder = order
+  showingWaiters(orderId: number) {
+    if(this.showWaiter) {
+      return 
+    }
+    this.getById(orderId);
     this.showDishes = false;
     this.showDrinks = false;
-    this.showWaiter = true;
+    this.showWaiter = !this.showWaiter;
+    
   }
 
   getAll() {
+    console.log('ayhp')
     this.orderService.getAll().subscribe({
       next: (value) => {
         this.orders.set(value);
         
-      },
-      error: (error) => {
-        console.error('Error fetching orders:', error);
-      },
-    });
-  }
+        
+        }})}
 
-pay(orderId: number) {
+  
+
+pay(orderId: number, status: string) {
+  if(status === 'PAGADO' || status === 'CAMBIO') {
+    return
+  }
   if (this.quantity.valid && orderId) {
     const quantityValue = this.quantity.value;
     if(quantityValue !== null) {
@@ -153,9 +165,8 @@ pay(orderId: number) {
         next: (payment) => {
           console.log('Pago realizado:');
           this.quantity.setValue('');
-          this.getById(orderId);
-          this.getAll()
-
+          this.oneOrder = payment;
+          this.getAll();
         },
       });
     }
@@ -176,12 +187,17 @@ pay(orderId: number) {
     
   }
 
-   updatePrice(orderId: number) { 
+   updatePrice(orderId: number) {
     if(orderId !== null) {
     this.orderService.calculateTotal(orderId).subscribe({
       next: (total) => {
-          console.log('mijo arranque:', total);
-        }
+        if(this.oneOrder && this.oneOrder.orderId){
+        this.oneOrder.total = total
+        this.getAll()
+        
+
+        
+        }}
       }
     )}}
 
@@ -217,5 +233,7 @@ pay(orderId: number) {
     return viewAllCopy;
   }
 
+
+ 
 
 }

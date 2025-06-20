@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, EventEmitter, inject, input, Output, signal } from '@angular/core';
 import { DrinkService } from '../../service/drink.service';
 import { Drink } from '../../model/drink.model';
 import DrinkorderComponent from "../drinkorder/drinkorder.component";
@@ -23,6 +23,7 @@ export class DrinkComponent {
   orderIdOrder = new FormControl('')
   drinkIdOrder = new FormControl('')
   drinkOrderService = inject(DrinkorderService)
+  @Output() updateTotal = new EventEmitter<number>();
 
 
 
@@ -61,17 +62,17 @@ export class DrinkComponent {
 
 
 saveDrinkOrder(drinkId:number){
-  
-      this.drinkOrderService.save(this.orderId(),drinkId,1).subscribe({
-        next: (order)=>{
-          this.quantity.setValue('')
-        },error:(error)=>{
+    this.drinkOrderService.save(this.orderId(),drinkId,1).subscribe({
+      next: (order)=>{
+        this.quantity.setValue('');
+        this.updateTotal.emit(this.orderId());
+      },error:(error)=>{
         
-        }
-      })
-    }
+      }
+    })
+  }
   
 
 }
-  
+
 

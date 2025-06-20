@@ -3,6 +3,7 @@ export interface DrinkOrderAll {
     quantity:number
     orderId: number
     drinkId: number
+    waiterName: string;
     
     
 
