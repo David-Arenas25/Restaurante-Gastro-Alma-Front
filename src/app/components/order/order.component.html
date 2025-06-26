@@ -1,204 +1,266 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Pedidos</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-slate-100 min-h-screen">
-    <div class="flex h-screen overflow-hidden">
-        <!-- Main Content -->
-        <div class="flex-1 overflow-y-auto">
-            <!-- Header Section -->
-            <header class="bg-white shadow-md px-6 py-4 sticky top-0 z-10">
-                <div class="flex justify-between items-center">
-                    <h1 class="text-2xl font-bold text-gray-800">
-                        Gastro Alma POS
-                    </h1>
-                    <div class="flex items-center space-x-4">
-                        <button (click)="changeFilter('date')" 
-                            class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 focus:ring-2 focus:ring-blue-300 transition">
-                            <i class="far fa-calendar mr-2"></i>Hoy
-                        </button>
-                        <button (click)="changeFilter('todos')" 
-                            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-gray-300 transition">
-                            <i class="fas fa-list mr-2"></i>Todos
-                        </button>
-                    </div>
-                </div>
-            </header>
+<div class="h-screen flex">
+  <!-- LADO IZQUIERDO - Lista de órdenes -->
+  <div class="w-1/2 flex flex-col border-r border-gray-300">
+    <header class="bg-white shadow-md px-6 py-4 sticky top-0 z-10">
+      <div class="">
+        <button
+          (click)="changeFilter('date')"
+          class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 focus:ring-2 focus:ring-blue-300 transition"
+        >
+          <i class="far fa-calendar mr-2"></i>Hoy
+        </button>
+        <button
+          (click)="changeFilter('todos')"
+          class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 focus:ring-2 focus:ring-gray-300 transition"
+        >
+          <i class="fas fa-list mr-2"></i>Todos
+        </button>
+      </div>
+    </header>
 
-            <!-- Quick Actions Bar -->
-            <div class="bg-white shadow-md p-4 border-t border-gray-100">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Search -->
-                    <div class="relative">
-                        <input (input)="changeFilter('id')" [formControl]="orderId" type="number" 
-                            class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Buscar pedido por ID">
-                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                    </div>
-                    
-                    <!-- New Order -->
-                    <div class="flex gap-2">
-                        <input [formControl]="waiterId" type="number" 
-                            class="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="ID Mesero">
-                        <button (click)="saveOrder()" 
-                            class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-                            <i class="fas fa-plus mr-2"></i>Nueva Orden
-                        </button>
-                    </div>
-                </div>
-            </div>
+    <div
+      class="grid grid-cols-1 bg-white shadow-md p-4 border-t border-gray-100"
+    >
+      <div class="relative mb-3">
+        <input
+          (input)="changeFilter('id')"
+          [formControl]="orderId"
+          type="number"
+          class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Buscar pedido por ID"
+        />
+        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+      </div>
 
-            <!-- Orders Grid -->
-            <div class="p-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-                    @for (order of filterView(); track $index) {
-                        <div (click)="showingDishes(order.orderId)" class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-                            <!-- Order Header -->
-                            <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
-                                <div class="flex items-center space-x-3">
-                                    <span class="text-lg font-semibold text-gray-800">#{{ order.orderId }}</span>
-                                    <span class="px-2 py-1 rounded text-sm" 
-                                        [ngClass]="{
-                                            'bg-yellow-100 text-yellow-800': order.status === 'PENDIENTE',
-                                            'bg-green-100 text-green-800': order.status === 'PAGADO'
-                                        }">
-                                        {{ order.status }}
-                                    </span>
-                                </div>
-                                <span class="text-lg font-semibold text-blue-600">{{ order.total| currency:'USD' }}</span>
-                            </div>
-
-                            <!-- Order Details -->
-                            <div class="p-4">
-                                <div class="space-y-2 text-sm">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Fecha:</span>
-                                        <span class="text-gray-900">{{ order.orderDate | date:'dd/MM/yyyy HH:mm' }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Mesero:</span>
-                                        <span class="text-gray-900">#{{ order.waiterId }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="mt-4 flex gap-2">
-                                    <button (click)="showingDishes(order.orderId)" 
-                                        class="flex-1 px-3 py-2 text-sm bg-blue-50 text-blue-700 rounded hover:bg-blue-100 focus:ring-2 focus:ring-blue-200 transition">
-                                        <i class="fas fa-edit mr-1"></i>Editar
-                                    </button>
-                                    <button (click)="deleteOrder(order.orderId)" 
-                                        class="px-3 py-2 text-sm bg-red-50 text-red-700 rounded hover:bg-red-100 focus:ring-2 focus:ring-red-200 transition">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-
-        <!-- Side Panel -->
-        @if (showDishes || showDrinks || showWaiter) {
-            <div (click)="showDishes = false; showDrinks = false; showWaiter = false" class="fixed inset-0 bg-black/30 z-40"></div>
-            <div  class="fixed inset-y-0 right-0 w-full md:w-2/3 lg:w-1/2 bg-white shadow-xl z-50 flex flex-col">
-                @if (oneOrder) {
-                    <!-- Panel Header -->
-                    <div class="bg-gray-800 text-white px-6 py-4 flex justify-between items-center">
-                        <div>
-                            <h2 class="text-xl font-semibold">Pedido #{{oneOrder.orderId}}</h2>
-                            <div class="flex items-center mt-1 space-x-3 text-sm">
-                                <span class="px-2 py-0.5 rounded bg-opacity-20" 
-                                    [ngClass]="{
-                                        'bg-yellow-400 text-yellow-100': oneOrder.status === 'PENDIENTE',
-                                        'bg-green-400 text-green-100': oneOrder.status === 'PAGADO'
-                                    }">
-                                    {{oneOrder.status}}
-                                </span>
-                                <span class="text-gray-300">{{oneOrder.total | currency:'USD'}}</span>
-                            </div>
-                        </div>
-                        <button (click)="showDishes = false; showDrinks = false; showWaiter = false" 
-                            class="text-gray-400 hover:text-white">
-                            <i class="fas fa-times text-xl"></i>
-                        </button>
-                    </div>
-                            
-                    <!-- Panel Navigation -->
-                    <div class="bg-gray-50 border-b border-gray-200">
-                        <div class="flex divide-x divide-gray-200">
-                            <button (click)="showingDishes(oneOrder.orderId)" 
-                                class="flex-1 px-4 py-3 text-sm font-medium transition"
-                                [ngClass]="showDishes ? 'bg-white text-blue-600' : 'text-gray-600 hover:bg-gray-100'">
-                                <i class="fas fa-receipt mr-2"></i>Detalles
-                            </button>
-                            <button (click)="showingDrinks(oneOrder.orderId)"
-                                class="flex-1 px-4 py-3 text-sm font-medium transition"
-                                [ngClass]="showDrinks ? 'bg-white text-blue-600' : 'text-gray-600 hover:bg-gray-100'">
-                                <i class="fas fa-plus-circle mr-2"></i>Agregar Items
-                            </button>
-                            <button (click)="showingWaiters(oneOrder.orderId)"
-                                class="flex-1 px-4 py-3 text-sm font-medium transition"
-                                [ngClass]="showWaiter ? 'bg-white text-blue-600' : 'text-gray-600 hover:bg-gray-100'">
-                                <i class="fas fa-user-tie mr-2"></i>Mesero
-                            </button>
-                        </div>
-                    </div>
-                  
-                    <!-- Panel Content -->
-                    <div class="flex-1 overflow-y-auto">
-                        
-                        <div class="p-6">
-                            <div class="mb-6">
-                                  @if (showPayment) {
-                                <div class="bg-blue-50 rounded-lg p-4">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Procesar Pago</h3>
-                                    <div class="space-y-3">
-                                        <div>
-                                            <label for="payment" class="block text-sm font-medium text-gray-700 mb-1">Monto a Pagar</label>
-                                            <div class="relative">
-                                                <span class="absolute left-3 top-2.5 text-gray-500">$</span>
-                                                <input [formControl]="quantity" type="number" id="payment"
-                                                    class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                    placeholder="0.00">
-                                            </div>
-                                        </div>
-                                        <button (click)="pay(oneOrder.orderId,oneOrder.status)" type="button"
-                                            class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition flex items-center justify-center">
-                                            <i class="fas fa-check mr-2"></i>Procesar Pago
-                                        </button>
-                                    </div>
-                                </div>}
-                            </div>
-                        
-                            <!-- Component Display -->
-                            @if (showDishes) {
-                                <div class="space-y-6">
-                                    <app-dishorder [orderIdItem]="oneOrder.orderId" />
-                                    <app-drinkorder [drinkOrderId]="oneOrder.orderId" />
-                                </div>
-                            }
-
-                            @if (showDrinks) {
-                                <div class="space-y-6">
-                                    <app-drink [orderId]="oneOrder.orderId" (updateTotal)="updatePrice($event)" />
-                                    <app-dish [order]="oneOrder" (updateTotal)="updatePrice($event)" />
-                                </div>
-                            }
-
-                            @if (showWaiter) {
-                                <app-waiter [waiterId]="oneOrder.waiterId" />
-                            }
-                        </div>
-                    </div>
-                }
-            </div>
-        }
+      <div class="flex gap-3">
+        <input
+          [formControl]="waiterId"
+          type="number"
+          class="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="ID Mesero"
+        />
+        <button
+          (click)="saveOrder()"
+          class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+        >
+          <i class="fas fa-plus mr-2"></i>Nueva Orden
+        </button>
+      </div>
     </div>
-</body>
-</html>
+
+    <div class="flex-1 overflow-auto p-4 bg-gray-100">
+      <div class="grid grid-cols-1 gap-4">
+        @if(filterView().length === 0) {
+        <div class="h-full flex items-center justify-center bg-gray-50">
+          <div class="text-center">
+            <i class="fas fa-receipt text-gray-400 text-6xl mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">
+              No hay pedidos
+            </h3>
+            <p class="text-gray-500">
+              cree un pedido con su número de identificación
+            </p>
+          </div>
+        </div>
+        } @else { @for (order of filterView(); track $index) {
+        <div
+          (click)="showAnithing(order.orderId)"
+          class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+        >
+          <div
+            class="px-4 py-3 border-b border-gray-100 flex justify-between items-center"
+          >
+            <div class="flex items-center space-x-3">
+              <span class="text-lg font-semibold text-gray-800"
+                >#{{ order.orderId }}</span
+              >
+              <span
+                class="px-2 py-1 rounded text-sm"
+                [ngClass]="{
+                  'bg-yellow-100 text-yellow-800': order.status === 'PENDIENTE',
+                  'bg-green-100 text-green-800': order.status === 'PAGADO'
+                }"
+              >
+                {{ order.status }}
+              </span>
+            </div>
+            <span class="text-lg font-semibold text-blue-600">{{
+              order.total | currency : "USD"
+            }}</span>
+          </div>
+
+          <div class="p-4">
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Fecha:</span>
+                <span class="text-gray-900">{{
+                  order.orderDate | date : "dd/MM/yyyy HH:mm"
+                }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Mesero:</span>
+                <span class="text-gray-900">#{{ order.waiterId }}</span>
+              </div>
+            </div>
+
+            <div class="mt-4 flex gap-2 justify-end">
+              <button
+                (click)="deleteOrder(order.orderId)"
+                class="px-3 py-2 text-sm bg-red-50 text-red-700 rounded hover:bg-red-100 focus:ring-2 focus:ring-red-200 transition"
+              >
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        }}
+      </div>
+    </div>
+  </div>
+
+  <!-- LADO DERECHO - Detalles de la orden -->
+  <div class="w-1/2 flex flex-col">
+    @if (oneOrder && oneOrder.orderId) {
+    <div class="h-full overflow-auto w-full bg-white shadow-xl flex flex-col">
+      <div
+        class="bg-gray-800 text-white px-6 py-4 flex justify-between items-center"
+      >
+        <div>
+          <h2 class="text-xl font-semibold">Pedido #{{ oneOrder.orderId }}</h2>
+          <div class="flex items-center mt-1 space-x-3 text-sm">
+            <span
+              class="px-2 py-0.5 rounded"
+              [ngClass]="{
+                'bg-yellow-400 text-yellow-100':
+                  oneOrder.status === 'PENDIENTE',
+                'bg-green-400 text-green-100': oneOrder.status === 'PAGADO'
+              }"
+            >
+              {{ oneOrder.status }}
+            </span>
+            <span class="text-gray-300">{{
+              oneOrder.total | currency : "USD"
+            }}</span>
+          </div>
+        </div>
+        <i
+          (click)="showOrdersPanel(false)"
+          class="fa-solid fa-xmark cursor-pointer"
+        ></i>
+      </div>
+
+      <div class="flex divide-x divide-gray-200">
+        <button
+          (click)="showingDishes(oneOrder.orderId)"
+          class="flex-1 px-4 py-3 text-sm font-medium transition"
+          [ngClass]="
+            showDishes
+              ? 'bg-white text-blue-600'
+              : 'text-gray-600 hover:bg-gray-100'
+          "
+        >
+          <i class="fas fa-receipt mr-2"></i>Detalles
+        </button>
+        <button
+          (click)="showingDrinks(oneOrder.orderId)"
+          class="flex-1 px-4 py-3 text-sm font-medium transition"
+          [ngClass]="
+            showDrinks
+              ? 'bg-white text-blue-600'
+              : 'text-gray-600 hover:bg-gray-100'
+          "
+        >
+          <i class="fas fa-plus-circle mr-2"></i>Agregar Items
+        </button>
+        <button
+          (click)="showingWaiters(oneOrder.orderId)"
+          class="flex-1 px-4 py-3 text-sm font-medium transition"
+          [ngClass]="
+            showWaiter
+              ? 'bg-white text-blue-600'
+              : 'text-gray-600 hover:bg-gray-100'
+          "
+        >
+          <i class="fas fa-user-tie mr-2"></i>Mesero
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-auto">
+        @if (showDishes) {
+        <div class="space-y-6 p-4">
+          <app-dishorder [orderIdItem]="oneOrder.orderId" />
+          <app-drinkorder [drinkOrderId]="oneOrder.orderId" />
+        </div>
+        } @if (showDrinks) {
+        <div class="space-y-6 p-4">
+          <app-drink
+            [orderId]="oneOrder.orderId"
+            (updateTotal)="updatePrice($event)"
+          />
+          <app-dish [order]="oneOrder" (updateTotal)="updatePrice($event)" />
+        </div>
+        } @if (showWaiter) {
+        <div class="p-4">
+          <app-waiter [waiterId]="oneOrder.waiterId" />
+        </div>
+        }
+      </div>
+
+      <div class="border-t border-gray-200">
+        <div class="p-6">
+          @if (showPayment && oneOrder) {
+          <div class="bg-blue-50 rounded-lg p-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+              Procesar Pago
+            </h3>
+            <div class="space-y-3">
+              <div>
+                <label
+                  for="payment"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Monto a Pagar</label
+                >
+                <div class="relative">
+                  <span class="absolute left-3 top-2.5 text-gray-500">$</span>
+                  <input
+                    [formControl]="quantity"
+                    type="number"
+                    id="payment"
+                    class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="0.00"
+                  />
+                </div>
+              </div>
+              <button
+                (click)="pay(oneOrder.orderId, oneOrder.status)"
+                type="button"
+                class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition flex items-center justify-center"
+              >
+                <i class="fas fa-check mr-2"></i>Procesar Pago
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    }@else {
+    <i
+      (click)="showOrdersPanel(false)"
+      class="fa-solid fa-xmark cursor-pointer text-end"
+    ></i>
+    <div class="h-full flex items-center justify-center bg-gray-50">
+      <div class="text-center">
+        <i class="fas fa-receipt text-gray-400 text-6xl mb-4"></i>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">
+          No hay ordenes aún
+        </h3>
+        <p class="text-gray-500">
+          cree un pedido con su número de identificación
+        </p>
+      </div>
+    </div>
+
+    }
+  </div>
+</div>

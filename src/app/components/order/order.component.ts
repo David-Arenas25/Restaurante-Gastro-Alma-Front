@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { OrderService } from '../../service/order.service';
 import { Order } from '../../model/order.model';
 import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
@@ -22,7 +22,7 @@ import { filter } from 'rxjs';
     DishorderComponent,
     WaiterComponent,
     CurrencyPipe,
-    NgClass
+    NgClass,
   ],
   templateUrl: './order.component.html',
   styleUrl: './order.component.css',
@@ -33,29 +33,34 @@ export default class OrderComponent {
   activePaymentId: number | null = null;
   quantity = new FormControl('');
   order!: Order;
-  showDishes = false;
+  showDishes = true;
   showDrinks = false;
   showWaiter = false;
   showPayment = false;
-  oneOrder!: Order 
+  oneOrder!: Order | null;
   orderId = new FormControl('');
   state = signal('todos');
   waiterId = new FormControl('');
+  orderIdTable = input<number>(0)
+  showPanel = output<boolean>();
+  showOrderPanel = true
+
+
 
   ngOnInit() {
-    this.getAll();
+    this.getAll()
+    
   }
- getById(orderId: number) {
-  if (orderId) {
-    this.orderService.getById(orderId).subscribe({
-      next: (order) => {
-       
-          this.oneOrder = order
-          this.updatePrice(orderId);  
-          
-         
-}})}}
-
+  getById(orderId: number) {
+    if (orderId) {
+      this.orderService.getById(orderId).subscribe({
+        next: (order) => {
+          this.oneOrder = order;
+          this.updatePrice(this.oneOrder.orderId);
+        },
+      });
+    }
+  }
 
   changeFilter(filter: string) {
     this.state.set(filter);
@@ -73,6 +78,7 @@ export default class OrderComponent {
           status: 'PENDIENTE',
           waiterId: parseInt(value),
           cambio: 0,
+          tableId: this.orderIdTable(),
         };
         const getWaiter = this.orderService.save(newOrder).subscribe({
           next: (order) => {
@@ -102,113 +108,100 @@ export default class OrderComponent {
       },
     });
   }
-
-  showingDrinks(orderId: number) {
-    if(this.showDrinks) {
-      return 
+  showAnithing(orderId: number) {
+    if (this.oneOrder?.orderId !== orderId) {
+      this.oneOrder = null;
     }
     this.getById(orderId);
-    this.showPayment = false
+    this.showDishes = true;
+  }
+  showingDrinks(orderId: number) {
+    this.getById(orderId);
+    this.showPayment = false;
     this.showDishes = false;
     this.showDrinks = !this.showDrinks;
     this.showWaiter = false;
   }
 
   showingDishes(orderId: number) {
-    if(this.showDishes) {
-      return 
-    }
-    this.getById(orderId);
-    this.showDishes = !this.showDishes;
+    this.showDishes = true;
     this.showDrinks = false;
     this.showWaiter = false;
     this.showPayment = true;
-   
+    if (this.oneOrder?.orderId !== orderId) {
+      this.oneOrder = null;
+    }
+    this.getById(orderId);
   }
   showingWaiters(orderId: number) {
-    if(this.showWaiter) {
-      return 
-    }
     this.getById(orderId);
     this.showDishes = false;
     this.showDrinks = false;
     this.showWaiter = !this.showWaiter;
-    
   }
 
   getAll() {
-    console.log('ayhp')
     this.orderService.getAll().subscribe({
       next: (value) => {
         this.orders.set(value);
-        
-        
-        }})}
-
-  
-
-pay(orderId: number, status: string) {
-  if(status === 'PAGADO' || status === 'CAMBIO') {
-    return
+      
+      },
+    });
   }
-  if (this.quantity.valid && orderId) {
-    const quantityValue = this.quantity.value;
-    if(quantityValue !== null) {
-    const quantityNumber = parseFloat(quantityValue);
-    // if (quantityNumber > 0) {
-      // if (
-      //   this.oneOrder &&
-      //   Math.abs(quantityNumber - this.oneOrder.total) < 0.01
-      // )
-      // {
-      this.orderService.pay(quantityNumber, orderId).subscribe({
-        next: (payment) => {
-          console.log('Pago realizado:');
-          this.quantity.setValue('');
-          this.oneOrder = payment;
-          this.getAll();
-        },
-      });
+
+  pay(orderId: number, status: string) {
+    if (status === 'PAGADO' || status === 'CAMBIO') {
+      return;
     }
-  }}
-  
+    if (this.quantity.valid && orderId) {
+      const quantityValue = this.quantity.value;
+      if (quantityValue !== null) {
+        const quantityNumber = parseFloat(quantityValue);
+        // if (quantityNumber > 0) {
+        // if (
+        //   this.oneOrder &&
+        //   Math.abs(quantityNumber - this.oneOrder.total) < 0.01
+        // )
+        // {
+        this.orderService.pay(quantityNumber, orderId).subscribe({
+          next: (payment) => {
+            console.log('Pago realizado:');
+            this.quantity.setValue('');
+            this.oneOrder = payment;
+          },
+        });
+      }
+    }
+  }
 
   activeOrderPayment(orderId: number) {
     this.updatePrice(orderId);
     if (this.activePaymentId === orderId) {
       this.activePaymentId = null;
-    
-
     } else {
-      
       this.activePaymentId = orderId;
-      
     }
-    
   }
 
-   updatePrice(orderId: number) {
-    if(orderId !== null) {
-    this.orderService.calculateTotal(orderId).subscribe({
-      next: (total) => {
-        if(this.oneOrder && this.oneOrder.orderId){
-        this.oneOrder.total = total
-        this.getAll()
-        
-
-        
-        }}
-      }
-    )}}
-
-
+  updatePrice(orderId: number) {
+    if (orderId !== null) {
+      this.orderService.calculateTotal(orderId).subscribe({
+        next: (total) => {
+          if (this.oneOrder && this.oneOrder.orderId) {
+          }
+        },
+      });
+    }
+  }
 
   filterView() {
     const viewAllCopy = this.orders();
     const stateCopy = this.state();
 
     if (stateCopy === 'todos') {
-      return viewAllCopy;
+      const filter  = viewAllCopy.filter((order) => order.tableId === this.orderIdTable());
+      this.oneOrder = filter[0]
+      return filter;
     }
 
     if (stateCopy === 'id' && this.orderId.valid) {
@@ -232,8 +225,7 @@ pay(orderId: number, status: string) {
 
     return viewAllCopy;
   }
-
-
- 
-
+   showOrdersPanel(panel: boolean) {
+    this.showPanel.emit(panel);
+  }
 }
