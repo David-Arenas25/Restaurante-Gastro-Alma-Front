@@ -10,6 +10,11 @@ export const routes: Routes = [
         path: 'tables',
         loadComponent: () => import('./components/table/table.component')
     },
+      {
+        path: 'detail/:slug',
+        loadComponent: () =>
+         import('./components/order-detail/order-detail.component')
+      },
     {
         path: 'orders',
         loadComponent: () => import('./components/order/order.component')

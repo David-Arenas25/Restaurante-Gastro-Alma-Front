@@ -1,0 +1,145 @@
+ <!-- LADO DERECHO - Detalles de la orden -->
+  <div class="w-1/2 flex flex-col">
+    @if (oneOrder && oneOrder.orderId) {
+    <div class="h-full overflow-auto w-full bg-white shadow-xl flex flex-col">
+      <div
+        class="bg-gray-800 text-white px-6 py-4 flex justify-between items-center"
+      >
+        <div>
+          <h2 class="text-xl font-semibold">Pedido #{{ oneOrder.orderId }}</h2>
+          <div class="flex items-center mt-1 space-x-3 text-sm">
+            <span
+              class="px-2 py-0.5 rounded"
+              [ngClass]="{
+                'bg-yellow-400 text-yellow-100':
+                  oneOrder.status === 'PENDIENTE',
+                'bg-green-400 text-green-100': oneOrder.status === 'PAGADO'
+              }"
+            >
+              {{ oneOrder.status }}
+            </span>
+            <span class="text-gray-300">{{
+              oneOrder.total | currency : "USD"
+            }}</span>
+          </div>
+        </div>
+        <i
+          (click)="showOrdersPanel(false)"
+          class="fa-solid fa-xmark cursor-pointer"
+        ></i>
+      </div>
+
+      <div class="flex divide-x divide-gray-200">
+        <button
+          (click)="showingDishes(oneOrder.orderId)"
+          class="flex-1 px-4 py-3 text-sm font-medium transition"
+          [ngClass]="
+            showDishes
+              ? 'bg-white text-blue-600'
+              : 'text-gray-600 hover:bg-gray-100'
+          "
+        >
+          <i class="fas fa-receipt mr-2"></i>Detalles
+        </button>
+        <button
+          (click)="showingDrinks(oneOrder.orderId)"
+          class="flex-1 px-4 py-3 text-sm font-medium transition"
+          [ngClass]="
+            showDrinks
+              ? 'bg-white text-blue-600'
+              : 'text-gray-600 hover:bg-gray-100'
+          "
+        >
+          <i class="fas fa-plus-circle mr-2"></i>Agregar Items
+        </button>
+        <button
+          (click)="showingWaiters(oneOrder.orderId)"
+          class="flex-1 px-4 py-3 text-sm font-medium transition"
+          [ngClass]="
+            showWaiter
+              ? 'bg-white text-blue-600'
+              : 'text-gray-600 hover:bg-gray-100'
+          "
+        >
+          <i class="fas fa-user-tie mr-2"></i>Mesero
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-auto">
+        @if (showDishes) {
+        <div class="space-y-6 p-4">
+          <app-dishorder [orderIdItem]="oneOrder.orderId" />
+          <app-drinkorder [drinkOrderId]="oneOrder.orderId" />
+        </div>
+        } @if (showDrinks) {
+        <div class="space-y-6 p-4">
+          <app-drink
+            [orderId]="oneOrder.orderId"
+            (updateTotal)="updatePrice($event)"
+          />
+          <app-dish [order]="oneOrder" (updateTotal)="updatePrice($event)" />
+        </div>
+        } @if (showWaiter) {
+        <div class="p-4">
+          <app-waiter [waiterId]="oneOrder.waiterId" />
+        </div>
+        }
+      </div>
+
+      <div class="border-t border-gray-200">
+        <div class="p-6">
+          @if (showPayment && oneOrder) {
+          <div class="bg-blue-50 rounded-lg p-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+              Procesar Pago
+            </h3>
+            <div class="space-y-3">
+              <div>
+                <label
+                  for="payment"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Monto a Pagar</label
+                >
+                <div class="relative">
+                  <span class="absolute left-3 top-2.5 text-gray-500">$</span>
+                  <input
+                    [formControl]="quantity"
+                    type="number"
+                    id="payment"
+                    class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="0.00"
+                  />
+                </div>
+              </div>
+              <button
+                (click)="pay(oneOrder.orderId, oneOrder.status)"
+                type="button"
+                class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition flex items-center justify-center"
+              >
+                <i class="fas fa-check mr-2"></i>Procesar Pago
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    }@else {
+    <i
+      (click)="showOrdersPanel(false)"
+      class="fa-solid fa-xmark cursor-pointer text-end"
+    ></i>
+    <div class="h-full flex items-center justify-center bg-gray-50">
+      <div class="text-center">
+        <i class="fas fa-receipt text-gray-400 text-6xl mb-4"></i>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">
+          No hay ordenes aún
+        </h3>
+        <p class="text-gray-500">
+          cree un pedido con su número de identificación
+        </p>
+      </div>
+    </div>
+
+    }
+  </div>

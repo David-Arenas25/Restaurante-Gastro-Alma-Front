@@ -9,6 +9,7 @@ import DrinkorderComponent from '../drinkorder/drinkorder.component';
 import { DishorderComponent } from '../dishorder/dishorder.component';
 import { WaiterComponent } from '../waiter/waiter.component';
 import { filter } from 'rxjs';
+import { RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-order',
@@ -16,13 +17,9 @@ import { filter } from 'rxjs';
   imports: [
     DatePipe,
     ReactiveFormsModule,
-    DishComponent,
-    DrinkComponent,
-    DrinkorderComponent,
-    DishorderComponent,
-    WaiterComponent,
     CurrencyPipe,
     NgClass,
+    RouterLinkWithHref
   ],
   templateUrl: './order.component.html',
   styleUrl: './order.component.css',
@@ -42,7 +39,6 @@ export default class OrderComponent {
   state = signal('todos');
   waiterId = new FormControl('');
   orderIdTable = input<number>(0)
-  showPanel = output<boolean>();
   showOrderPanel = true
 
 
@@ -115,31 +111,6 @@ export default class OrderComponent {
     this.getById(orderId);
     this.showDishes = true;
   }
-  showingDrinks(orderId: number) {
-    this.getById(orderId);
-    this.showPayment = false;
-    this.showDishes = false;
-    this.showDrinks = !this.showDrinks;
-    this.showWaiter = false;
-  }
-
-  showingDishes(orderId: number) {
-    this.showDishes = true;
-    this.showDrinks = false;
-    this.showWaiter = false;
-    this.showPayment = true;
-    if (this.oneOrder?.orderId !== orderId) {
-      this.oneOrder = null;
-    }
-    this.getById(orderId);
-  }
-  showingWaiters(orderId: number) {
-    this.getById(orderId);
-    this.showDishes = false;
-    this.showDrinks = false;
-    this.showWaiter = !this.showWaiter;
-  }
-
   getAll() {
     this.orderService.getAll().subscribe({
       next: (value) => {
@@ -148,32 +119,6 @@ export default class OrderComponent {
       },
     });
   }
-
-  pay(orderId: number, status: string) {
-    if (status === 'PAGADO' || status === 'CAMBIO') {
-      return;
-    }
-    if (this.quantity.valid && orderId) {
-      const quantityValue = this.quantity.value;
-      if (quantityValue !== null) {
-        const quantityNumber = parseFloat(quantityValue);
-        // if (quantityNumber > 0) {
-        // if (
-        //   this.oneOrder &&
-        //   Math.abs(quantityNumber - this.oneOrder.total) < 0.01
-        // )
-        // {
-        this.orderService.pay(quantityNumber, orderId).subscribe({
-          next: (payment) => {
-            console.log('Pago realizado:');
-            this.quantity.setValue('');
-            this.oneOrder = payment;
-          },
-        });
-      }
-    }
-  }
-
   activeOrderPayment(orderId: number) {
     this.updatePrice(orderId);
     if (this.activePaymentId === orderId) {
@@ -225,7 +170,5 @@ export default class OrderComponent {
 
     return viewAllCopy;
   }
-   showOrdersPanel(panel: boolean) {
-    this.showPanel.emit(panel);
-  }
+
 }
