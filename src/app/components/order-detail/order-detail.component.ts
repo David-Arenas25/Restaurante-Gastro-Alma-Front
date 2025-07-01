@@ -8,7 +8,6 @@ import { DrinkComponent } from '../drink/drink.component';
 import { DishorderComponent } from '../dishorder/dishorder.component';
 import DrinkorderComponent from '../drinkorder/drinkorder.component';
 import { WaiterComponent } from '../waiter/waiter.component';
-import { rxResource } from '@angular/core/rxjs-interop';
 
 
 @Component({
