@@ -61,11 +61,20 @@ export class DrinkComponent {
 
 
 saveDrinkOrder(drinkId:number){
+<<<<<<< Updated upstream
   
       this.drinkOrderService.save(this.orderId(),drinkId,1).subscribe({
         next: (order)=>{
           this.quantity.setValue('')
         },error:(error)=>{
+=======
+    this.drinkOrderService.save(this.orderId(),drinkId,1).subscribe({
+      next: (order)=>{
+        this.quantity.setValue('');
+        this.getAll()
+        this.updateTotal.emit(this.orderId());
+      },error:(error)=>{
+>>>>>>> Stashed changes
         
         }
       })

@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -201,3 +202,90 @@
     </div>
 </body>
 </html>
+=======
+<div class="relative">
+  <div class="grid grid-cols-1 bg-white shadow-lg rounded-2xl p-6 border border-gray-100">
+    <div class="relative mb-4">
+      <input
+        (input)="changeFilter('id')"
+        [formControl]="orderId"
+        type="number"
+        class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-lg"
+        placeholder="Buscar pedido por ID"
+      />
+      <i class="fas fa-search absolute left-3 top-4 text-gray-400"></i>
+    </div>
+    <div class="flex gap-3">
+      <input
+        [formControl]="waiterId"
+        type="number"
+        class="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-lg"
+        placeholder="ID Mesero"
+      />
+      <button
+        (click)="saveOrder()"
+        class="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-bold shadow"
+      >
+        <i class="fas fa-plus mr-2"></i>Nueva Orden
+      </button>
+    </div>
+  </div>
+  <div class="flex-1 overflow-auto p-6 bg-gradient-to-br from-gray-100 via-gray-50 to-emerald-50 min-h-[60vh]">
+    <div class="grid grid-cols-1 gap-6">
+      @if(filterView().length === 0) {
+      <div class="h-full flex items-center justify-center bg-gray-50 rounded-2xl shadow-inner py-16">
+        <div class="text-center">
+          <i class="fas fa-receipt text-gray-300 text-6xl mb-4"></i>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">No hay pedidos</h3>
+          <p class="text-gray-500">Cree un pedido con su número de identificación</p>
+        </div>
+      </div>
+      } @else { @for (order of filterView(); track $index) {
+      <div
+        class="bg-white rounded-2xl shadow-md border border-gray-200 hover:shadow-xl transition-shadow cursor-pointer"
+        [routerLink]="['/detail', order.orderId]"
+      >
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+          <div class="flex items-center space-x-3">
+            <span class="text-xl font-bold text-gray-800">#{{ order.orderId }}</span>
+            <span
+              class="px-3 py-1 rounded-full text-sm font-semibold"
+              [ngClass]="{
+                'bg-yellow-100 text-yellow-800': order.status === 'PENDIENTE',
+                'bg-green-100 text-green-800': order.status === 'PAGADO'
+              }"
+            >
+              {{ order.status }}
+            </span>
+             <span class="ml-3 px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-100">
+        Mesa #{{ order.tableId }}
+      </span>
+          </div>
+          <button
+            (click)="deleteOrder(order.orderId); $event.stopPropagation()"
+            class="px-3 py-2 text-sm bg-red-50 text-red-700 rounded hover:bg-red-100 focus:ring-2 focus:ring-red-200 transition"
+          >
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+        <div class="p-6">
+          <div class="space-y-2 text-base">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Fecha:</span>
+              <span class="text-gray-900">{{ order.orderDate | date : "dd/MM/yyyy HH:mm" }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Mesero:</span>
+              <span class="text-gray-900">#{{ order.waiterId }}</span>
+            </div>
+          </div>
+          <div class="mt-4 flex gap-2 justify-end">
+            <span class="text-xl font-bold text-blue-600">{{ order.total | currency : "USD" }}</span>
+          </div>
+        </div>
+      </div>
+      }}
+    </div>
+  </div>
+</div>
+>>>>>>> Stashed changes

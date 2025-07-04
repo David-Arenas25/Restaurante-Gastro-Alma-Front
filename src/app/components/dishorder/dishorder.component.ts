@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { DishorderService } from '../../service/dishorder.service';
 import { DishOrderAll } from '../../model/dish.order.all.model';
 import { CommonModule } from '@angular/common';
@@ -14,6 +14,7 @@ export class DishorderComponent {
   private dishOrderService = inject(DishorderService);
   dishOrders = signal<DishOrderAll[]>([]);
   orderIdItem = input.required<number>();
+<<<<<<< Updated upstream
 
   // Computed signal para los platos filtrados
   filteredOrders = computed(() => {
@@ -23,6 +24,10 @@ export class DishorderComponent {
   // Computed signal para verificar si hay platos
    hasOrders = computed(() => this.filteredOrders().length > 0)
 
+=======
+  hasOrders = computed(() => this.dishOrders().length > 0)
+  deleteOrder = output<string>()
+>>>>>>> Stashed changes
 
   ngOnInit() {
     this.getAll()
@@ -66,6 +71,7 @@ quantity() {
   this.dishOrderService.delete(orderId,dishId).subscribe({
     next: (deleteOrder) =>{
       // alert('se borro' + deleteOrder)
+      this.deletingOrder()
       this.getAll()
     },error: (error)=>{
       // alert("borrado")
@@ -73,5 +79,8 @@ quantity() {
     }
   })
 }
+ deletingOrder() {
+    this.deleteOrder.emit('borrar');
+  }
 
 }

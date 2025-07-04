@@ -65,6 +65,11 @@ saveDishOrder(dishId:number){
         next: (order)=>{
           // alert("orden guardada"+ order)
           this.quantity.setValue('')
+<<<<<<< Updated upstream
+=======
+          this.getAll()
+          this.updateTotal.emit(this.order().orderId);
+>>>>>>> Stashed changes
         },error:(error)=>{
           // alert("error"+error)
         }

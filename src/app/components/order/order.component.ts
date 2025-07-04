@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 import { Component, computed, inject, signal } from '@angular/core';
+=======
+import { ChangeDetectorRef, Component, computed, inject, input, output, signal } from '@angular/core';
+>>>>>>> Stashed changes
 import { OrderService } from '../../service/order.service';
 import { Order } from '../../model/order.model';
 import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
@@ -11,6 +15,7 @@ import { WaiterComponent } from '../waiter/waiter.component';
 import { filter } from 'rxjs';
 
 @Component({
+<<<<<<< Updated upstream
   selector: 'app-order',
   standalone: true,
   imports: [
@@ -26,6 +31,20 @@ import { filter } from 'rxjs';
   ],
   templateUrl: './order.component.html',
   styleUrl: './order.component.css',
+=======
+    selector: 'app-order',
+    imports: [
+        DatePipe,
+        ReactiveFormsModule,
+        CurrencyPipe,
+        NgClass,
+        RouterLinkWithHref,
+        
+      
+    ],
+    templateUrl: './order.component.html',
+    styleUrl: './order.component.css'
+>>>>>>> Stashed changes
 })
 export default class OrderComponent {
   orderService = inject(OrderService);
@@ -40,7 +59,23 @@ export default class OrderComponent {
   orderId = new FormControl('');
   state = signal('todos');
   waiterId = new FormControl('');
+<<<<<<< Updated upstream
   total = signal(0);
+=======
+  slug!: number;
+  showOrderPanel = true
+  private cdr = inject(ChangeDetectorRef)
+  ngOnInit() {
+    this.route.paramMap.subscribe(params => {
+      const slugParam = params.get('slug');
+      if (slugParam) {
+        this.slug = +slugParam;
+        this.cdr.markForCheck()
+      }
+      this.getAll();
+    });
+  }
+>>>>>>> Stashed changes
 
   ngOnInit() {
     this.getAll();
@@ -191,8 +226,14 @@ pay(orderId: number) {
     const viewAllCopy = this.orders();
     const stateCopy = this.state();
 
+<<<<<<< Updated upstream
     if (stateCopy === 'todos') {
       return viewAllCopy;
+=======
+   
+    if(stateCopy === 'todos'){
+      return viewAllCopy.reverse();
+>>>>>>> Stashed changes
     }
 
     if (stateCopy === 'id' && this.orderId.valid) {
@@ -212,6 +253,11 @@ pay(orderId: number) {
       });
 
       return todayOrders;
+    }
+     if (this.slug) {
+      const filter  = viewAllCopy.filter((order) => order.tableId === this.slug);
+      this.oneOrder = filter[0]
+      return filter;
     }
 
     return viewAllCopy;
