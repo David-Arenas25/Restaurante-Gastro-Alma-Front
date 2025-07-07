@@ -6,10 +6,14 @@ import { Table } from '../model/table.model';
   providedIn: 'root'
 })
 export class TableService extends BasehttpService {
+  
 
   getAll(){
     return this.http.get<Table[]>(`${this.API_URL}/tables/all`)
   }
+  cambiarEstadoMesa(idMesa: number, estado: string) {
+  return this.http.put(`${this.API_URL}/tables/estado`, { idMesa, estado });
+}
 
 
 }

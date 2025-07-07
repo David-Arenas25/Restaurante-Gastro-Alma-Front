@@ -2,20 +2,22 @@ import { Component, computed, inject, input, output, signal } from '@angular/cor
 import { DishorderService } from '../../service/dishorder.service';
 import { DishOrderAll } from '../../model/dish.order.all.model';
 import { CommonModule } from '@angular/common';
+import { DishComponent } from '../dish/dish.component';
 
 @Component({
   selector: 'app-dishorder',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,DishComponent],
   templateUrl: './dishorder.component.html',
   styleUrl: './dishorder.component.css'
 })
 export class DishorderComponent {
   private dishOrderService = inject(DishorderService);
   dishOrders = signal<DishOrderAll[]>([]);
-  orderIdItem = input.required<number>();
+  orderId= input.required<number>();
   hasOrders = computed(() => this.dishOrders().length > 0)
   deleteOrder = output<string>()
+
 
   ngOnInit() {
     this.getAll()
@@ -38,7 +40,7 @@ getAll() {
             uniqueOrders.push(order);
           }
         });
-      const filter = uniqueOrders.filter(order => order.orderId === this.orderIdItem())
+      const filter = uniqueOrders.filter(order => order.orderId === this.orderId())
       this.dishOrders.set(filter);
       this.quantity(); 
     },
@@ -78,5 +80,17 @@ quantity() {
  deletingOrder() {
     this.deleteOrder.emit('borrar');
   }
+  saveDishOrder(dishId:number){
+      this.dishOrderService.save(this.orderId(),dishId,1).subscribe({
+        next: (order)=>{
+          console.log('no quizi')
+          this.getAll()
+        },error:(error)=>{
+          // alert("error"+error)
+          
+        }
+      })
+    }}
 
-}
+
+

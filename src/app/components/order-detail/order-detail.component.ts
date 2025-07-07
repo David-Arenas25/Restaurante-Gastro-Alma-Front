@@ -8,11 +8,11 @@ import { DrinkComponent } from '../drink/drink.component';
 import { DishorderComponent } from '../dishorder/dishorder.component';
 import DrinkorderComponent from '../drinkorder/drinkorder.component';
 import { WaiterComponent } from '../waiter/waiter.component';
+import { ActivatedRoute, RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-order-detail',
   standalone: true,
-  imports: [NgClass,ReactiveFormsModule, CurrencyPipe, WaiterComponent, DishComponent, DrinkComponent, DishorderComponent, DrinkorderComponent],
   imports: [
     CommonModule,
     RouterLinkWithHref,
@@ -31,24 +31,11 @@ export default class OrderDetailComponent {
   private route = inject(ActivatedRoute);
   private orderService = inject(OrderService);
   orderDetail = signal<Order>({} as Order);
-    orders = signal<Order[]>([]);
-    activePaymentId: number | null = null;
-    quantity = new FormControl('');
-    showDishes = true;
-    showDrinks = false;
-    showWaiter = false;
-    showPayment = true;
-    oneOrder!: Order | null;
-    orderId = new FormControl('');
-    state = signal('todos');
-    waiterId = new FormControl('');
-    showOrderPanel = true
-    showPanel = output<boolean>();
   orders = signal<Order[]>([]);
   activePaymentId: number | null = null;
   quantity = new FormControl('');
   showDishes = true;
-  showDrinks = false;
+  showDrinks = true;
   showWaiter = false;
   showPayment = false;
   oneOrder!: Order | null;
@@ -119,7 +106,7 @@ export default class OrderDetailComponent {
 
   pay(orderId: number, status: string) {
     if (status === 'PAGADO' || status === 'CAMBIO') {
-      alert('ya se ha procesado el pago')
+      alert('ya se ha procesado el pago');
       return;
     }
     if (this.quantity.valid && orderId) {
@@ -146,11 +133,10 @@ export default class OrderDetailComponent {
     if (orderId !== null) {
       this.orderService.calculateTotal(orderId).subscribe({
         next: (total) => {
-          console.log('total',total)
+          console.log('total', total);
           this.orderDetail().total = total;
         },
       });
     }
   }
 }
-  

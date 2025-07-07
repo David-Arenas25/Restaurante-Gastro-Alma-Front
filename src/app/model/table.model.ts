@@ -5,5 +5,5 @@ export interface Table {
     tableNumber: string
     tableStatus: string
     capacity: number
-    orders: Order[]
+
 }

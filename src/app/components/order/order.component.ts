@@ -9,7 +9,7 @@ import DrinkorderComponent from '../drinkorder/drinkorder.component';
 import { DishorderComponent } from '../dishorder/dishorder.component';
 import { WaiterComponent } from '../waiter/waiter.component';
 import { filter } from 'rxjs';
-import { RouterLinkWithHref } from '@angular/router';
+import { ActivatedRoute, RouterLinkWithHref } from '@angular/router';
 
 @Component({
     selector: 'app-order',
@@ -41,13 +41,14 @@ export default class OrderComponent {
   waiterId = new FormControl('');
   orderIdTable = input<number>(0)
   showOrderPanel = true
-  private cdr = inject(ChangeDetectorRef)
+  slug!:number
+  route = inject(ActivatedRoute)
+
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params:any) => {
       const slugParam = params.get('slug');
       if (slugParam) {
         this.slug = +slugParam;
-        this.cdr.markForCheck()
       }
       this.getAll();
     });

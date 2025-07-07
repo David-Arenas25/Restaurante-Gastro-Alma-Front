@@ -1,4 +1,4 @@
-<div class="max-w-full">
+
   <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 rounded-t-2xl">
     <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
       <i class="fas fa-cocktail text-purple-500"></i> Menú de Bebidas
@@ -9,7 +9,7 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
       @for (drink of drinks(); track $index) {
       <button 
-        (click)="saveDrinkOrder(drink.drinkId)"
+        (click)="emitDrinkOrder(drink.drinkId)"
         class="bg-white rounded-2xl border border-gray-200 hover:border-purple-400 hover:shadow-lg transition-all duration-200 text-left overflow-hidden group">
         <div class="h-24 bg-gray-50 flex items-center justify-center border-b border-gray-100 group-hover:bg-purple-50 transition-colors">
           <i class="fas fa-glass-martini-alt text-3xl text-gray-400 group-hover:text-purple-500 transition-colors"></i>
@@ -28,4 +28,3 @@
       }
     </div>
   </div>
-</div>

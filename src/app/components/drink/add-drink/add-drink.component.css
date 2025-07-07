@@ -1,0 +1,12 @@
+/* Estilos adicionales específicos para el componente */
+
+/* Animación para los mensajes de éxito y error */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+:host ::ng-deep .bg-green-100,
+:host ::ng-deep .bg-red-100 {
+  animation: fadeIn 0.3s ease-out;
+}

@@ -2,11 +2,14 @@ import { Component, computed, inject, input, signal } from '@angular/core';
 import { DrinkorderService } from '../../service/drinkorder.service';
 import { DrinkOrderAll } from '../../model/drink.order.all.model';
 import { CommonModule } from '@angular/common';
+import OrderDetailComponent from '../order-detail/order-detail.component';
+import { DrinkComponent } from '../drink/drink.component';
+import { RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-drinkorder',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,RouterLinkWithHref,DrinkComponent],
   templateUrl: './drinkorder.component.html',
   styleUrl: './drinkorder.component.css',
 })
@@ -15,7 +18,7 @@ export default class DrinkorderComponent {
   drinkOrders = signal<DrinkOrderAll[]>([]);
   quantityValue!: number;
   drinkId!: number;
-  drinkOrderId = input.required<number>();
+  orderId = input.required<number>();
 
   hasOrders = computed(() => this.drinkOrders().length > 0);
 
@@ -25,6 +28,9 @@ export default class DrinkorderComponent {
   getAll() {
     this.drinkOrderService.viewDrinkOrders().subscribe({
       next: (drinkOrders) => {
+        if(!this.orderId()){
+          return
+        }
         const uniqueOrders: DrinkOrderAll[] = [];
         drinkOrders.forEach((order) => {
           if (
@@ -39,9 +45,9 @@ export default class DrinkorderComponent {
             uniqueOrders.push(order);
           }
         });
-
+        console.log(uniqueOrders,this.orderId())
         const filter = uniqueOrders.filter(
-          (order) => order.orderId === this.drinkOrderId()
+          (order) => order.orderId === this.orderId()
         );
         this.drinkOrders.set(filter);
         console.log(this.drinkOrders(), 'orders')
@@ -77,4 +83,14 @@ export default class DrinkorderComponent {
       },
     });
   }
+  saveDrinkOrder(drinkId:number){
+    this.drinkOrderService.save(this.orderId(),drinkId,1).subscribe({
+      next: (order)=>{
+        this.getAll()
+      },error:(error)=>{
+        
+      }
+    })
+  }
 }
+
