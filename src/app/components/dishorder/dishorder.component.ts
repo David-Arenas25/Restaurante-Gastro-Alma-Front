@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { DishorderService } from '../../service/dishorder.service';
 import { DishOrderAll } from '../../model/dish.order.all.model';
 import { CommonModule } from '@angular/common';
@@ -15,7 +15,7 @@ export class DishorderComponent {
   dishOrders = signal<DishOrderAll[]>([]);
   orderIdItem = input.required<number>();
   hasOrders = computed(() => this.dishOrders().length > 0)
-
+  deleteOrder = output<string>()
 
   ngOnInit() {
     this.getAll()
@@ -67,6 +67,7 @@ quantity() {
   this.dishOrderService.delete(orderId,dishId).subscribe({
     next: (deleteOrder) =>{
       // alert('se borro' + deleteOrder)
+      this.deletingOrder()
       this.getAll()
     },error: (error)=>{
       // alert("borrado")
@@ -74,5 +75,8 @@ quantity() {
     }
   })
 }
+ deletingOrder() {
+    this.deleteOrder.emit('borrar');
+  }
 
 }

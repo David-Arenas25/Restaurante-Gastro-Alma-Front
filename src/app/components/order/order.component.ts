@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, inject, input, output, signal } from '@angular/core';
 import { OrderService } from '../../service/order.service';
 import { Order } from '../../model/order.model';
 import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
@@ -12,17 +12,18 @@ import { filter } from 'rxjs';
 import { RouterLinkWithHref } from '@angular/router';
 
 @Component({
-  selector: 'app-order',
-  standalone: true,
-  imports: [
-    DatePipe,
-    ReactiveFormsModule,
-    CurrencyPipe,
-    NgClass,
-    RouterLinkWithHref
-  ],
-  templateUrl: './order.component.html',
-  styleUrl: './order.component.css',
+    selector: 'app-order',
+    imports: [
+        DatePipe,
+        ReactiveFormsModule,
+        CurrencyPipe,
+        NgClass,
+        RouterLinkWithHref,
+        
+      
+    ],
+    templateUrl: './order.component.html',
+    styleUrl: './order.component.css'
 })
 export default class OrderComponent {
   orderService = inject(OrderService);
@@ -40,12 +41,16 @@ export default class OrderComponent {
   waiterId = new FormControl('');
   orderIdTable = input<number>(0)
   showOrderPanel = true
-
-
-
+  private cdr = inject(ChangeDetectorRef)
   ngOnInit() {
-    this.getAll()
-    
+    this.route.paramMap.subscribe(params => {
+      const slugParam = params.get('slug');
+      if (slugParam) {
+        this.slug = +slugParam;
+        this.cdr.markForCheck()
+      }
+      this.getAll();
+    });
   }
   getById(orderId: number) {
     if (orderId) {
@@ -143,10 +148,9 @@ export default class OrderComponent {
     const viewAllCopy = this.orders();
     const stateCopy = this.state();
 
-    if (stateCopy === 'todos') {
-      const filter  = viewAllCopy.filter((order) => order.tableId === this.orderIdTable());
-      this.oneOrder = filter[0]
-      return filter;
+   
+    if(stateCopy === 'todos'){
+      return viewAllCopy.reverse();
     }
 
     if (stateCopy === 'id' && this.orderId.valid) {
@@ -166,6 +170,11 @@ export default class OrderComponent {
       });
 
       return todayOrders;
+    }
+     if (this.slug) {
+      const filter  = viewAllCopy.filter((order) => order.tableId === this.slug);
+      this.oneOrder = filter[0]
+      return filter;
     }
 
     return viewAllCopy;

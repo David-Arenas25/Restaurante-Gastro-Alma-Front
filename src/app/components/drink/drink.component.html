@@ -1,54 +1,31 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú de Bebidas</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-white">
-    <div class="max-w-full">
-        <!-- Header -->
-        <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
-            <h2 class="text-lg font-semibold text-gray-800">
-                Menú de Bebidas
-                <span class="block text-sm font-normal text-gray-500 mt-1">Seleccione las bebidas para agregar al pedido</span>
-            </h2>
+<div class="max-w-full">
+  <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 rounded-t-2xl">
+    <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+      <i class="fas fa-cocktail text-purple-500"></i> Menú de Bebidas
+    </h2>
+    <span class="block text-sm font-normal text-gray-500 mt-1">Seleccione las bebidas para agregar al pedido</span>
+  </div>
+  <div class="p-6">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      @for (drink of drinks(); track $index) {
+      <button 
+        (click)="saveDrinkOrder(drink.drinkId)"
+        class="bg-white rounded-2xl border border-gray-200 hover:border-purple-400 hover:shadow-lg transition-all duration-200 text-left overflow-hidden group">
+        <div class="h-24 bg-gray-50 flex items-center justify-center border-b border-gray-100 group-hover:bg-purple-50 transition-colors">
+          <i class="fas fa-glass-martini-alt text-3xl text-gray-400 group-hover:text-purple-500 transition-colors"></i>
         </div>
-
-        <!-- Grid de Bebidas -->
         <div class="p-4">
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                @for (drink of drinks(); track $index) {
-                <button 
-                    (click)="saveDrinkOrder(drink.drinkId)"
-                    class="bg-white rounded-lg border border-gray-200 hover:border-purple-400 hover:shadow-md transition-all duration-200 text-left overflow-hidden group">
-                    <!-- Icono de la Bebida -->
-                    <div class="h-24 bg-gray-50 flex items-center justify-center border-b border-gray-100 group-hover:bg-purple-50 transition-colors">
-                        <i class="fas fa-glass-martini-alt text-2xl text-gray-400 group-hover:text-purple-500 transition-colors"></i>
-                    </div>
-
-                    <!-- Información de la Bebida -->
-                    <div class="p-3">
-                        <h3 class="font-medium text-gray-900 truncate">
-                            {{ drink.drinkName }}
-                        </h3>
-                        <p class="text-sm text-gray-500 mt-1 line-clamp-2 h-10">
-                            {{ drink.drinkDescription }}
-                        </p>
-                        <div class="mt-2 flex items-center justify-between">
-                            <span class="text-purple-600 font-semibold">
-                                ${{ drink.drinkPrice }}
-                            </span>
-                            <span class="text-xs text-gray-400 group-hover:text-purple-500">
-                                <i class="fas fa-plus-circle"></i>
-                            </span>
-                        </div>
-                    </div>
-                </button>
-                }
-            </div>
+          <h3 class="font-semibold text-gray-900 truncate">{{ drink.drinkName }}</h3>
+          <p class="text-sm text-gray-500 mt-1 line-clamp-2 h-10">{{ drink.drinkDescription }}</p>
+          <div class="mt-2 flex items-center justify-between">
+            <span class="text-purple-600 font-bold">${{ drink.drinkPrice }}</span>
+            <span class="text-xs text-gray-400 group-hover:text-purple-500">
+              <i class="fas fa-plus-circle"></i>
+            </span>
+          </div>
         </div>
+      </button>
+      }
     </div>
-</body>
-</html>
+  </div>
+</div>

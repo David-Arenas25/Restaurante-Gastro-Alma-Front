@@ -65,6 +65,7 @@ saveDishOrder(dishId:number){
       this.dishOrderService.save(this.order().orderId,dishId,1).subscribe({
         next: (order)=>{
           this.quantity.setValue('')
+          this.getAll()
           this.updateTotal.emit(this.order().orderId);
         },error:(error)=>{
           // alert("error"+error)

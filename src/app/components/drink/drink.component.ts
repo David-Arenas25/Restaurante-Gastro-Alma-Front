@@ -65,6 +65,7 @@ saveDrinkOrder(drinkId:number){
     this.drinkOrderService.save(this.orderId(),drinkId,1).subscribe({
       next: (order)=>{
         this.quantity.setValue('');
+        this.getAll()
         this.updateTotal.emit(this.orderId());
       },error:(error)=>{
         
