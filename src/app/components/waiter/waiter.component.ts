@@ -9,7 +9,7 @@ import { Waiter } from '../../model/waiter.model';
   templateUrl: './waiter.component.html',
   styleUrl: './waiter.component.css'
 })
-export class WaiterComponent {
+export default class WaiterComponent {
 
   waiterService = inject(WaiterService)
   waiters = signal<Waiter[]>([])

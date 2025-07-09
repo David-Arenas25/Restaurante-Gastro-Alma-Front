@@ -4,5 +4,6 @@ export interface Order{
         orderDate: Date;          
         status: string;          
         total: number;            
-        waiterId: number;         
+        waiterId: number;   
+        tableId: number;      
 }

@@ -1,77 +1,104 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { DrinkorderService } from '../../service/drinkorder.service';
 import { DrinkOrderAll } from '../../model/drink.order.all.model';
 import { CommonModule } from '@angular/common';
+import OrderDetailComponent from '../order-detail/order-detail.component';
+import { DrinkComponent } from '../drink/drink.component';
+import { RouterLinkWithHref } from '@angular/router';
 
 @Component({
   selector: 'app-drinkorder',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,RouterLinkWithHref,DrinkComponent],
   templateUrl: './drinkorder.component.html',
-  styleUrl: './drinkorder.component.css'
+  styleUrl: './drinkorder.component.css',
 })
 export default class DrinkorderComponent {
+  drinkOrderService = inject(DrinkorderService);
+  drinkOrders = signal<DrinkOrderAll[]>([]);
+  quantityValue!: number;
+  drinkId!: number;
+  orderId = input.required<number>();
+  addOrder = output<string>()
+  deleteOrder = output<string>()
+  hasOrders = computed(() => this.drinkOrders().length > 0);
 
-  drinkOrderService = inject(DrinkorderService)
-  drinkOrders = signal<DrinkOrderAll[]>([])
-  filterOrders = signal<DrinkOrderAll[]>([])
-  quantityValue!:number
-  drinkId!:number
-  drinkOrderId = input.required<number>()
-
-  filteredOrders = computed(() => 
-    this.drinkOrders().filter(order => order.orderId === this.drinkOrderId())
-  )
-  
-  hasOrders = computed(() => this.filteredOrders().length > 0)
-
-  ngOnInit() {  
-      this.getAll();      
+  ngOnInit() {
+    this.getAll();
   }
-getAll() {
+  getAll() {
   this.drinkOrderService.viewDrinkOrders().subscribe({
-    next: (drinkOrders) => {
-      console.log('Pedidos de bebidas obtenidos:', drinkOrders);
-      // Filtra para que solo quede un pedido por drinkName
+    next: (drinkOrders:DrinkOrderAll[]) => {
       const uniqueOrders: DrinkOrderAll[] = [];
       drinkOrders.forEach((order) => {
-        if (!uniqueOrders.find(u => u.drinkName === order.drinkName)) {
+        const alreadyExists = uniqueOrders.some(
+          (u) =>
+            u.orderId === order.orderId &&
+            u.drinkName === order.drinkName
+        );
+        if (!alreadyExists) {
           uniqueOrders.push(order);
         }
       });
-      this.drinkOrders.set(uniqueOrders); // Actualiza la señal
-      this.quantity(); // Llama después de actualizar los datos
+
+      // Filtrar por el orderId actual
+      const filteredOrders = uniqueOrders.filter(
+        (order) => order.orderId === this.orderId()
+      );
+
+      // Establecer los pedidos filtrados
+      this.drinkOrders.set(filteredOrders);
+
+      // Calcular cantidades u otras acciones
+      this.quantity();
     },
     error: (err) => {
-      console.error('Error al obtener pedidos de bebidas', err);
+      console.error('Error al obtener pedidos de platos', err);
     }
   });
 }
 
 
-quantity() {
-  
-  this.drinkOrders().forEach((drinkOrders:DrinkOrderAll) => {
-    this.drinkOrderService.quantity(drinkOrders.orderId, drinkOrders.drinkId).subscribe({
-      next: (quantity) => {
-        drinkOrders.quantity = quantity;
-              }
+  quantity() {
+    this.drinkOrders().forEach((drinkOrders: DrinkOrderAll) => {
+      this.drinkOrderService
+        .quantity(drinkOrders.orderId, drinkOrders.drinkId)
+        .subscribe({
+          next: (quantity) => {
+            drinkOrders.quantity = quantity;
+          },
+        });
+    });
+  }
+
+  deleteDrinkOrder(orderId: number, drinkId: number) {
+    this.drinkOrderService.delete(orderId, drinkId).subscribe({
+      next: (deleteOrder) => {
+        alert()
+        this.emitDeleteOrder()
+        this.getAll();
+      },
+      error: (error) => {
+        console.log(error)
+        this.getAll();
+      },
+    });
+  }
+  saveDrinkOrder(drinkId:number){
+    this.drinkOrderService.save(this.orderId(),drinkId,1).subscribe({
+      next: (order)=>{
+        this.emitUpdateOrder()
+        this.getAll()
+      },error:(error)=>{
+        
       }
-  )})
-
+    })
+  }
+emitDeleteOrder(){
+  this.deleteOrder.emit('borrar')
+}
+  emitUpdateOrder(){
+    this.addOrder.emit('agregar')
+  }
 }
 
-
-deleteDrinkOrder(orderId:number,drinkId:number){
-  this.drinkOrderService.delete(orderId,drinkId).subscribe({
-    next: (deleteOrder) =>{
-      // alert('se borro' + deleteOrder)
-      this.getAll()
-    },error: (error)=>{
-      // alert("borrado")
-      this.getAll()
-    }
-  })
-}
-
-}

@@ -1,37 +1,11 @@
-<<<<<<< Updated upstream
-import { Component, computed, inject, signal } from '@angular/core';
-=======
-import { ChangeDetectorRef, Component, computed, inject, input, output, signal } from '@angular/core';
->>>>>>> Stashed changes
+import { Component, inject, input, signal } from '@angular/core';
 import { OrderService } from '../../service/order.service';
 import { Order } from '../../model/order.model';
 import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { DishComponent } from '../dish/dish.component';
-import { DrinkComponent } from '../drink/drink.component';
-import DrinkorderComponent from '../drinkorder/drinkorder.component';
-import { DishorderComponent } from '../dishorder/dishorder.component';
-import { WaiterComponent } from '../waiter/waiter.component';
-import { filter } from 'rxjs';
+import { ActivatedRoute, RouterLinkWithHref } from '@angular/router';
 
 @Component({
-<<<<<<< Updated upstream
-  selector: 'app-order',
-  standalone: true,
-  imports: [
-    DatePipe,
-    ReactiveFormsModule,
-    DishComponent,
-    DrinkComponent,
-    DrinkorderComponent,
-    DishorderComponent,
-    WaiterComponent,
-    CurrencyPipe,
-    NgClass
-  ],
-  templateUrl: './order.component.html',
-  styleUrl: './order.component.css',
-=======
     selector: 'app-order',
     imports: [
         DatePipe,
@@ -44,7 +18,6 @@ import { filter } from 'rxjs';
     ],
     templateUrl: './order.component.html',
     styleUrl: './order.component.css'
->>>>>>> Stashed changes
 })
 export default class OrderComponent {
   orderService = inject(OrderService);
@@ -52,48 +25,54 @@ export default class OrderComponent {
   activePaymentId: number | null = null;
   quantity = new FormControl('');
   order!: Order;
-  showDishes = false;
+  showDishes = true;
   showDrinks = false;
   showWaiter = false;
-  oneOrder!: Order 
+  showPayment = false;
+  oneOrder!: Order | null;
   orderId = new FormControl('');
   state = signal('todos');
   waiterId = new FormControl('');
-<<<<<<< Updated upstream
-  total = signal(0);
-=======
-  slug!: number;
+  orderIdTable = input<number>(0)
   showOrderPanel = true
-  private cdr = inject(ChangeDetectorRef)
+  filter = signal<Order[]>([])
+  slug = 0
+  route = inject(ActivatedRoute)
+  tableMessage = `No ha seleccionado Mesa`
+
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
+    let param =  localStorage.getItem('tableId')
+    this.route.paramMap.subscribe((params:any) => {
       const slugParam = params.get('slug');
       if (slugParam) {
         this.slug = +slugParam;
-        this.cdr.markForCheck()
       }
-      this.getAll();
-    });
-  }
->>>>>>> Stashed changes
+      else if(param){
+        
+        this.slug = +param
+        
+      }else{
+        this.tableMessage = 'No ha seleccionado ninguna mesa'
+      } 
+      
+    })
+    
+      
 
-  ngOnInit() {
-    this.getAll();
- 
+    this.tableMessage = `Mesa ${this.slug}`
+    this.getAll()
+  
   }
- getById(orderId: number) {
-  if (orderId) {
-    this.orderService.getById(orderId).subscribe({
-      next: (order) => {
-       
-          this.oneOrder = order
-          this.total.set(order.total);
-          this.updatePrice(orderId);
-                
-          
-         
-}})}}
-
+  getById(orderId: number) {
+    if (orderId) {
+      this.orderService.getById(orderId).subscribe({
+        next: (order) => {
+          this.oneOrder = order;
+          this.updatePrice(this.oneOrder.orderId);
+        },
+      });
+    }
+  }
 
   changeFilter(filter: string) {
     this.state.set(filter);
@@ -111,28 +90,25 @@ export default class OrderComponent {
           status: 'PENDIENTE',
           waiterId: parseInt(value),
           cambio: 0,
+          tableId: this.slug,
         };
         const getWaiter = this.orderService.save(newOrder).subscribe({
           next: (order) => {
-            // alert('orden guardada '+ order.orderId)
             this.getAll();
             this.waiterId.setValue('');
           },
           error: (error) => {
-            // alert('error su orden no se guardó'+error)
           },
         });
       } else {
-        // alert('ingrese id de mesero por favor')
       }
     }
   }
 
   deleteOrder(orderId: number) {
     return this.orderService.delete(orderId).subscribe({
-      // next: order => {alert('se borro ' + orderId)
       next: (order) => {
- 
+        this.getAll();
       },
 
       error: (error) => {
@@ -140,128 +116,74 @@ export default class OrderComponent {
       },
     });
   }
-
-  showingDrinks(order:Order) {
-    this.oneOrder = order
-    this.showDishes = false;
-    this.showDrinks = true;
-    this.showWaiter = false;
-  }
-
-  showingDishes(order:Order) {
-    this.oneOrder = order
+  showAnithing(orderId: number) {
+    if (this.oneOrder?.orderId !== orderId) {
+      this.oneOrder = null;
+    }
+    this.getById(orderId);
     this.showDishes = true;
-    this.showDrinks = false;
-    this.showWaiter = false;
   }
-  showingWaiters(order: Order) {
-      this.oneOrder = order
-    this.showDishes = false;
-    this.showDrinks = false;
-    this.showWaiter = true;
-  }
-
   getAll() {
     this.orderService.getAll().subscribe({
       next: (value) => {
         this.orders.set(value);
-        
-      },
-      error: (error) => {
-        console.error('Error fetching orders:', error);
+          this.filterView();
+      
       },
     });
   }
 
-pay(orderId: number) {
-  if (this.quantity.valid && orderId) {
-    const quantityValue = this.quantity.value;
-    if(quantityValue !== null) {
-    const quantityNumber = parseFloat(quantityValue);
-    // if (quantityNumber > 0) {
-      // if (
-      //   this.oneOrder &&
-      //   Math.abs(quantityNumber - this.oneOrder.total) < 0.01
-      // )
-      // {
-      this.orderService.pay(quantityNumber, orderId).subscribe({
-        next: (payment) => {
-          console.log('Pago realizado:');
-          this.quantity.setValue('');
-          this.getById(orderId);
-          this.getAll()
-
+  updatePrice(orderId: number) {
+    if (orderId !== null) {
+      this.orderService.calculateTotal(orderId).subscribe({
+        next: (total) => {
+          if (this.oneOrder && this.oneOrder.orderId) {
+          }
         },
       });
     }
-  }}
-  
-
-  activeOrderPayment(orderId: number) {
-    this.updatePrice(orderId);
-    if (this.activePaymentId === orderId) {
-      this.activePaymentId = null;
-    
-
-    } else {
-      
-      this.activePaymentId = orderId;
-      
-    }
-    
   }
-
-   updatePrice(orderId: number) { 
-    if(orderId !== null) {
-    this.orderService.calculateTotal(orderId).subscribe({
-      next: (total) => {
-          console.log('mijo arranque:', total);
-        }
-      }
-    )}}
-
-
 
   filterView() {
     const viewAllCopy = this.orders();
     const stateCopy = this.state();
+       if (this.slug) {
+ 
+      this.filter.set(viewAllCopy.filter((order) => order.tableId === this.slug))
+      this.oneOrder = this.filter()[0]
+     
 
-<<<<<<< Updated upstream
-    if (stateCopy === 'todos') {
-      return viewAllCopy;
-=======
-   
-    if(stateCopy === 'todos'){
-      return viewAllCopy.reverse();
->>>>>>> Stashed changes
+ 
+    }else{
+      
+      this.filter.set(this.orders())
     }
-
-    if (stateCopy === 'id' && this.orderId.valid) {
-      const idValue = this.orderId.value;
-      if (idValue !== null) {
-        const vAllCopy = viewAllCopy.filter(
-          (order) => order.orderId === parseInt(idValue)
-        );
-        return vAllCopy;
-      }
-    }
-    if (stateCopy === 'date') {
-      const today = new Date().toISOString().slice(0, 10);
-
-      const todayOrders = viewAllCopy.filter((order) => {
-        return new Date(order.orderDate).toISOString().slice(0, 10) === today;
-      });
-
-      return todayOrders;
-    }
-     if (this.slug) {
-      const filter  = viewAllCopy.filter((order) => order.tableId === this.slug);
-      this.oneOrder = filter[0]
-      return filter;
-    }
-
-    return viewAllCopy;
   }
 
+  searchById() {
+        if ( this.orderId.valid && this.orderId.value !== '') {
+      const idValue = this.orderId.value;
+      if (idValue !== null) {
+        this.filter.set(this.orders().filter(
+          (order) => order.orderId === parseInt(idValue)))
+  }else{
+    const idFilter = this.orders().filter(order => order.tableId === this.slug)
+    this.filter.set(idFilter)
+  }
+        }}
 
+
+  setOrderId(orderId: number) {
+    localStorage.setItem('orderId', orderId.toString())
+  }
+
+  listAllOrders(event: Event){
+    if (event.type === 'click') {
+      this.filter.set(this.orders())
+      this.tableMessage = 'Todos Los Pedidos'
+    } else if (event.type === 'blur') {
+      this.filter.set(this.orders().filter(order => order.tableId === this.slug))
+      this.tableMessage = `Mesa ${this.slug}`
+    }
+  }
 }

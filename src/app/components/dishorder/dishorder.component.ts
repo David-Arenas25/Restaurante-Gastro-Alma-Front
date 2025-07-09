@@ -2,32 +2,24 @@ import { Component, computed, inject, input, output, signal } from '@angular/cor
 import { DishorderService } from '../../service/dishorder.service';
 import { DishOrderAll } from '../../model/dish.order.all.model';
 import { CommonModule } from '@angular/common';
+import { DishComponent } from '../dish/dish.component';
 
 @Component({
   selector: 'app-dishorder',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,DishComponent],
   templateUrl: './dishorder.component.html',
   styleUrl: './dishorder.component.css'
 })
 export class DishorderComponent {
   private dishOrderService = inject(DishorderService);
   dishOrders = signal<DishOrderAll[]>([]);
-  orderIdItem = input.required<number>();
-<<<<<<< Updated upstream
-
-  // Computed signal para los platos filtrados
-  filteredOrders = computed(() => {
-    return this.dishOrders().filter(order => order.orderId === this.orderIdItem());
-  });
-
-  // Computed signal para verificar si hay platos
-   hasOrders = computed(() => this.filteredOrders().length > 0)
-
-=======
+  orderId= input.required<number>();
   hasOrders = computed(() => this.dishOrders().length > 0)
   deleteOrder = output<string>()
->>>>>>> Stashed changes
+    addOrder = output<string>()
+
+
 
   ngOnInit() {
     this.getAll()
@@ -35,19 +27,34 @@ export class DishorderComponent {
   }
 getAll() {
   this.dishOrderService.viewDishOrders().subscribe({
-    next: (dishorder) => {
-      // Filtra para que solo quede un pedido por drinkName
+    next: (dishOrders) => {
       const uniqueOrders: DishOrderAll[] = [];
-      dishorder.forEach((order) => {
-        if (!uniqueOrders.find(u => u.dishName === order.dishName)) {
+
+      // Eliminar duplicados por orderId y dishName
+      dishOrders.forEach((order) => {
+        const alreadyExists = uniqueOrders.some(
+          (u) =>
+            u.orderId === order.orderId &&
+            u.dishName === order.dishName
+        );
+        if (!alreadyExists) {
           uniqueOrders.push(order);
         }
       });
-      this.dishOrders.set(uniqueOrders); // Actualiza la señal
-      this.quantity(); // Llama después de actualizar los datos
+
+      // Filtrar por el orderId actual
+      const filteredOrders = uniqueOrders.filter(
+        (order) => order.orderId === this.orderId()
+      );
+
+      // Establecer los pedidos filtrados
+      this.dishOrders.set(filteredOrders);
+
+      // Calcular cantidades u otras acciones
+      this.quantity();
     },
     error: (err) => {
-      console.error('Error al obtener pedidos de bebidas', err);
+      console.error('Error al obtener pedidos de platos', err);
     }
   });
 }
@@ -59,7 +66,6 @@ quantity() {
   this.dishOrders().forEach((dishOrders:DishOrderAll) => {
     this.dishOrderService.quantity(dishOrders.orderId, dishOrders.dishId).subscribe({
       next: (quantity) => {
-        console.log('Cantidad obtenida:', quantity);
         dishOrders.quantity = quantity;
               }
       }
@@ -82,5 +88,20 @@ quantity() {
  deletingOrder() {
     this.deleteOrder.emit('borrar');
   }
+    emitUpdateOrder(){
+    this.addOrder.emit('agregar')
+  }
+  saveDishOrder(dishId:number){
+      this.dishOrderService.save(this.orderId(),dishId,1).subscribe({
+        next: (order)=>{
+          this.emitUpdateOrder()
+          this.getAll()
+        },error:(error)=>{
+          // alert("error"+error)
+          
+        }
+      })
+    }}
 
-}
+
+

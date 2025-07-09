@@ -3,7 +3,7 @@ export interface DishOrderAll {
     dishId:number
     orderId:number
     quantity:number
-    
+    waiterName:string
     
 
 }

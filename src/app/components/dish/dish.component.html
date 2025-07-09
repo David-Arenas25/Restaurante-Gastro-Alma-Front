@@ -1,77 +1,4 @@
-<<<<<<< Updated upstream
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú de Platos</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold text-gray-900">
-                Menú de Platos
-                <span class="block text-base font-normal text-gray-600 mt-2">Seleccione los platos para añadir al pedido</span>
-            </h2>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @for (dish of dishes(); track dish.dishId) {
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-blue-500">                <!-- Card completo clickeable -->
-                 <button 
-                    (click)="saveDishOrder(dish.dishId)"
-                    class="w-full text-left transition-transform duration-200 hover:scale-105">
-                    <div class="h-48 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-                        <i class="fas fa-utensils text-4xl text-blue-400"></i>
-                    </div>
-
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">
-                            {{ dish.dishName }}
-                        </h3>
-                        <p class="text-gray-600 text-sm mb-4">
-                            {{ dish.dishDescription }}
-                        </p>
-                        <p class="text-lg font-medium text-blue-600">
-                            ${{ dish.dishPrice }}
-                        </p>
-                        
-                        <div class="mt-4 text-sm text-gray-500">
-                            <i class="fas fa-hand-pointer mr-2"></i>
-                            Click para añadir
-                        </div>
-                    </div>
-                </button>
-            </div>
-            }
-        <div class="mt-12 text-center text-gray-600">
-            <p class="text-sm">Haga clic en cualquier plato para agregarlo al pedido</p>
-        </div>
-    </div> 
-    @if (alerta) {
-      <div id="popup" class="fixed top-5 right-5 bg-white text-gray-800 px-6 py-4 rounded-xl shadow-lg opacity-0 transition-opacity duration-500 ease-in-out pointer-events-none">
-    ✅ ¡Acción realizada con éxito!
-  </div>
-}
-
-  <script>
-    // Mostrar el pop-up
-    const popup = document.getElementById('popup');
-    popup.classList.add('opacity-100', 'pointer-events-auto');
-
-    // Esperar 3 segundos y desvanecer
-    setTimeout(() => {
-      popup.classList.remove('opacity-100');
-      popup.classList.add('opacity-0');
-    }, 3000);
-  </script>
-    </div>
-</body>
-</html>
-=======
-<div class="max-w-full">
   <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 rounded-t-2xl">
     <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
       <i class="fas fa-hamburger text-red-500"></i> Menú de Platos
@@ -81,8 +8,9 @@
   <div class="p-6">
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
       @for (dish of dishes(); track dish.dishId) {
+        @if(dish && dish.dishId){
       <button 
-        (click)="saveDishOrder(dish.dishId)"
+        (click)="emitDishOrder(dish.dishId)"
         class="bg-white rounded-2xl border border-gray-200 hover:border-red-400 hover:shadow-lg transition-all duration-200 text-left overflow-hidden group">
         <div class="h-24 bg-gray-50 flex items-center justify-center border-b border-gray-100 group-hover:bg-red-50 transition-colors">
           <i class="fas fa-utensils text-3xl text-gray-400 group-hover:text-red-500 transition-colors"></i>
@@ -98,7 +26,7 @@
           </div>
         </div>
       </button>
-      }
+      }}
     </div>
   </div>
   @if (alerta) {
@@ -107,5 +35,3 @@
       <span>Plato agregado al pedido</span>
     </div>
   }
-</div>
->>>>>>> Stashed changes

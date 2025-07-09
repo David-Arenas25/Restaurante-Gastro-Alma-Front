@@ -1,0 +1,81 @@
+<div class="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg">
+  <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Create Drink</h2>
+
+  <form class="space-y-4">
+    <div>
+      <label for="drinkName" class="block text-sm font-medium text-gray-700">Drink Name</label>
+      <input [formControl]="drinkName"  type="text" id="drinkName" name="drinkName" placeholder="Enter drink name"
+             class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+    </div>
+
+    <div>
+      <label for="drinkDescription" class="block text-sm font-medium text-gray-700">Description</label>
+      <textarea [formControl]="drinkDescription" id="drinkDescription" name="drinkDescription" rows="3" placeholder="Describe the drink"
+                class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
+    </div>
+
+
+    <div>
+      <label for="drinkPrice" class="block text-sm font-medium text-gray-700">Price ($)</label>
+      <input [formControl]="drinkPrice" type="number" id="drinkPrice" name="drinkPrice" step="0.01" min="0"
+             class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+    </div>
+
+    <div class="pt-4">
+      <button type="submit"
+      (click)="saveDrink()"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+        Save Drink
+      </button>
+    </div>
+  </form>
+</div>
+<div class="p-6 max-w-6xl mx-auto">
+  <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Dish List</h2>
+
+  <div class="hidden md:flex justify-center text-center bg-gray-100 rounded-t-xl px-4 py-3 font-semibold text-gray-700 text-sm">
+    <div class="w-24">ID</div>
+    <div class="w-1/3">Name</div>
+    <div class="w-1/3">Description</div>
+    <div class="w-1/3">Price</div>
+    <div class="w-24 text-center">Action</div>
+  </div>
+ <div *ngFor="let drink of drinks(); let i = index"
+       class="mb-4 bg-white shadow-md rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+
+    <input
+      type="number"
+      [(ngModel)]="drink.drinkId"
+      class="border rounded-lg px-3 py-2 w-full md:w-24 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      placeholder="ID"
+      [disabled]="true"
+    />
+
+    <input
+      type="text"
+      [(ngModel)]="drink.drinkName"
+      class="border rounded-lg px-3 py-2 w-full md:w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      placeholder="Name"
+    />
+
+    <input
+      type="text"
+      [(ngModel)]="drink.drinkDescription"
+      class="border rounded-lg px-3 py-2 w-full md:w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      placeholder="Description"
+    />
+
+    <input
+      type="text"
+      [(ngModel)]="drink.drinkPrice"
+      class="border rounded-lg px-3 py-2 w-full md:w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      placeholder="Price"
+    />
+
+    <button
+      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition w-full md:w-24"
+      (click)="save(drink)">
+      Save
+    </button>
+  </div>
+</div>

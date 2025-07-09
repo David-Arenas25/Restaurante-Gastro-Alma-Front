@@ -10,4 +10,9 @@ export class DishService extends BasehttpService {
   getAll(){
     return this.http.get<Dish[]>(`${this.API_URL}/dishes/all`)
    }
+   
+   saveDish(dish:Dish){
+    return this.http.post(`${this.API_URL}/dishes/save`, dish)
+   }
 }
+

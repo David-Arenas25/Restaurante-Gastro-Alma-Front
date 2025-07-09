@@ -1,4 +1,4 @@
-import { Component, inject, output, signal } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
 import { OrderService } from '../../service/order.service';
 import { Order } from '../../model/order.model';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -7,11 +7,12 @@ import { DishComponent } from '../dish/dish.component';
 import { DrinkComponent } from '../drink/drink.component';
 import { DishorderComponent } from '../dishorder/dishorder.component';
 import DrinkorderComponent from '../drinkorder/drinkorder.component';
-import { WaiterComponent } from '../waiter/waiter.component';
-import { ActivatedRoute, RouterLinkWithHref } from '@angular/router';
+import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
+
 
 @Component({
   selector: 'app-order-detail',
+  standalone: true,
   imports: [
     CommonModule,
     RouterLinkWithHref,
@@ -24,7 +25,7 @@ import { ActivatedRoute, RouterLinkWithHref } from '@angular/router';
     DrinkorderComponent,
   ],
   templateUrl: './order-detail.component.html',
-  styleUrl: './order-detail.component.css',
+
 })
 export default class OrderDetailComponent {
   private route = inject(ActivatedRoute);
@@ -34,7 +35,7 @@ export default class OrderDetailComponent {
   activePaymentId: number | null = null;
   quantity = new FormControl('');
   showDishes = true;
-  showDrinks = false;
+  showDrinks = true;
   showWaiter = false;
   showPayment = false;
   oneOrder!: Order | null;
@@ -44,21 +45,29 @@ export default class OrderDetailComponent {
   showOrderPanel = true;
   showPanel = output<boolean>();
   slug!: number;
+constructor(private router:Router){}
 
-  ngOnInit() {
-    this.route.paramMap.subscribe((params) => {
+ ngOnInit() {
+    let param =  localStorage.getItem('orderId')
+    this.route.paramMap.subscribe((params:any) => {
       const slugParam = params.get('slug');
       if (slugParam) {
         this.slug = +slugParam;
-        this.getById(this.slug);
-      } else {
-      }
-    });
+      }else if(param){
+        this.slug = +parseInt(param) 
+      }else{
+        alert('No ha seleccionado un pedido'); 
+        this.router.navigate(['/orders'])
+      }   
+
+ })
+    this.getById(this.slug)
   }
   showPay() {
     this.showPayment = true;
     this.showDishes = false;
     this.showDrinks = false;
+
   }
 
   getById(slug: number) {
@@ -66,6 +75,7 @@ export default class OrderDetailComponent {
       this.orderService.getById(slug).subscribe({
         next: (data) => {
           this.orderDetail.set(data);
+          this.updatePrice(data.orderId)
         },
       });
     }
@@ -105,22 +115,15 @@ export default class OrderDetailComponent {
 
   pay(orderId: number, status: string) {
     if (status === 'PAGADO' || status === 'CAMBIO') {
-      alert('ya se ha procesado el pago')
+      alert('ya se ha procesado el pago');
       return;
     }
     if (this.quantity.valid && orderId) {
       const quantityValue = this.quantity.value;
       if (quantityValue !== null) {
         const quantityNumber = parseFloat(quantityValue);
-        // if (quantityNumber > 0) {
-        // if (
-        //   this.oneOrder &&
-        //   Math.abs(quantityNumber - this.oneOrder.total) < 0.01
-        // )
-        // {
         this.orderService.pay(quantityNumber, orderId).subscribe({
           next: (payment) => {
-            console.log('Pago realizado:');
             this.quantity.setValue('');
             this.orderDetail.set(payment);
           },
@@ -132,7 +135,6 @@ export default class OrderDetailComponent {
     if (orderId !== null) {
       this.orderService.calculateTotal(orderId).subscribe({
         next: (total) => {
-          console.log('total',total)
           this.orderDetail().total = total;
         },
       });

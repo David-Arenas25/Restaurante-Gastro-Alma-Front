@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, EventEmitter, inject, input, output, Output, signal } from '@angular/core';
 import { DishService } from '../../service/dish.service';
 import { Dish } from '../../model/dish.model';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -19,9 +19,8 @@ export class DishComponent {
   dishService = inject(DishService)
   quantity = new FormControl('',Validators.required)
   dishOrderService = inject(DishorderService)
-  order = input.required<Order>()
   dishesId:number[] = []
-  
+  dish = output<number>()
   alerta = false;
 
 
@@ -37,51 +36,16 @@ export class DishComponent {
     })
   }
 
-  saveOrder(dish:Dish){
-    if(this.quantity.valid){
-      const value = this.quantity.value
-      if(value!==null){
-    
-    this.dishOrderService.save(this.order().orderId,dish.dishId,parseInt(value)).subscribe({
-      next:(saved)=>{
-        // alert('se guardo')
-        setTimeout(() => {
-          this.alerta = true
-        }, 2000);
-        this.quantity.setValue('')
-        this.getAll()
-        
-      },error:(error)=>{
-        // alert('error al guardar')
-        this.alerta = false;}
-    })
+  emitDishOrder(dishId:number){
+    this.dish.emit(dishId)
 
   }
-}}
-
-
-saveDishOrder(dishId:number){
-      this.dishOrderService.save(this.order().orderId,dishId,1).subscribe({
-        next: (order)=>{
-          // alert("orden guardada"+ order)
-          this.quantity.setValue('')
-<<<<<<< Updated upstream
-=======
-          this.getAll()
-          this.updateTotal.emit(this.order().orderId);
->>>>>>> Stashed changes
-        },error:(error)=>{
-          // alert("error"+error)
-        }
-      })
-    }
-  }
+}
 
 
 
 
 
- 
 
 
 

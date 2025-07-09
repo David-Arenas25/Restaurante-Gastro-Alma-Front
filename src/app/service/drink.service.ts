@@ -12,6 +12,12 @@ export class DrinkService extends BasehttpService {
   getAll(){
     return this.http.get<Drink[]>(`${this.API_URL}/drinks/all`)
    }
+   
+
+   save(drink:Drink){
+    return this.http.post<Drink>(`${this.API_URL}/drinks/save`,drink)
+   }
+
 
 
   
