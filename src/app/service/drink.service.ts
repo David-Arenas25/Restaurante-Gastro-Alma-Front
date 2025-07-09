@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Drink } from '../model/drink.model';
 import { BasehttpService } from './basehttp.service';
 import { DrinkOrderAll } from '../model/drink.order.all.model';
-import { HttpStatusCode } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +12,14 @@ export class DrinkService extends BasehttpService {
   getAll(){
     return this.http.get<Drink[]>(`${this.API_URL}/drinks/all`)
    }
+   
 
-  save(drink: Drink) {
-    return this.http.post<Drink>(`${this.API_URL}/drinks/save`, drink);
-  }
+   save(drink:Drink){
+    return this.http.post<Drink>(`${this.API_URL}/drinks/save`,drink)
+   }
+
+
+
+  
   
 }

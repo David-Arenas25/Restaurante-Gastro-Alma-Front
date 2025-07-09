@@ -1,85 +1,95 @@
-<div class="relative">
-  <div class="grid grid-cols-1 bg-white shadow-lg rounded-2xl p-6 border border-gray-100">
-    <div class="relative mb-4">
-      <input
-        (input)="changeFilter('id')"
-        [formControl]="orderId"
-        type="number"
-        class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-lg"
-        placeholder="Buscar pedido por ID"
-      />
-      <i class="fas fa-search absolute left-3 top-4 text-gray-400"></i>
-    </div>
-    <div class="flex gap-3">
-      <input
-        [formControl]="waiterId"
-        type="number"
-        class="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-lg"
-        placeholder="ID Mesero"
-      />
-      <button
-        (click)="saveOrder()"
-        class="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-bold shadow"
-      >
-        <i class="fas fa-plus mr-2"></i>Nueva Orden
-      </button>
-    </div>
-  </div>
-  <div class="flex-1 overflow-auto p-6 bg-gradient-to-br from-gray-100 via-gray-50 to-emerald-50 min-h-[60vh]">
-    <div class="grid grid-cols-1 gap-6">
-      @if(filterView().length === 0) {
-      <div class="h-full flex items-center justify-center bg-gray-50 rounded-2xl shadow-inner py-16">
-        <div class="text-center">
-          <i class="fas fa-receipt text-gray-300 text-6xl mb-4"></i>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">No hay pedidos</h3>
-          <p class="text-gray-500">Cree un pedido con su número de identificación</p>
+<div class="min-h-screen bg-gray-50 py-10 px-4">
+  <div class="max-w-6xl mx-auto">
+    <div class="bg-white shadow-lg rounded-3xl p-8 border border-gray-200 mb-10">
+      <h1 class="text-3xl font-extrabold text-emerald-600 text-center mb-6">{{ tableMessage }}</h1>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="relative col-span-2">
+          <input
+          (blur)="listAllOrders($event)"
+          (click)="listAllOrders($event)"
+            (input)="searchById()"
+            [formControl]="orderId"
+            type="number"
+            class="w-full pl-12 pr-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 text-lg placeholder-gray-400"
+            placeholder="Buscar pedido por ID"
+          />
+          <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
         </div>
-      </div>
-      } @else { @for (order of filterView(); track $index) {
-      <div
-        class="bg-white rounded-2xl shadow-md border border-gray-200 hover:shadow-xl transition-shadow cursor-pointer"
-        [routerLink]="['/detail', order.orderId]"
-      >
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-          <div class="flex items-center space-x-3">
-            <span class="text-xl font-bold text-gray-800">#{{ order.orderId }}</span>
-            <span
-              class="px-3 py-1 rounded-full text-sm font-semibold"
-              [ngClass]="{
-                'bg-yellow-100 text-yellow-800': order.status === 'PENDIENTE',
-                'bg-green-100 text-green-800': order.status === 'PAGADO'
-              }"
-            >
-              {{ order.status }}
-            </span>
-             <span class="ml-3 px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-100">
-        Mesa #{{ order.tableId }}
-      </span>
-          </div>
+
+        <div class="flex gap-3">
+          <input
+            [formControl]="waiterId"
+            type="number"
+            class="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 text-lg placeholder-gray-400"
+            placeholder="ID Mesero"
+          />
           <button
-            (click)="deleteOrder(order.orderId); $event.stopPropagation()"
-            class="px-3 py-2 text-sm bg-red-50 text-red-700 rounded hover:bg-red-100 focus:ring-2 focus:ring-red-200 transition"
+            (click)="saveOrder()"
+            class="whitespace-nowrap px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md transition"
           >
-            <i class="fas fa-trash-alt"></i>
+            <i class="fas fa-plus mr-2"></i>Crear
           </button>
         </div>
-        <div class="p-6">
-          <div class="space-y-2 text-base">
-            <div class="flex justify-between">
-              <span class="text-gray-600">Fecha:</span>
-              <span class="text-gray-900">{{ order.orderDate | date : "dd/MM/yyyy HH:mm" }}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Mesero:</span>
-              <span class="text-gray-900">#{{ order.waiterId }}</span>
-            </div>
-          </div>
-          <div class="mt-4 flex gap-2 justify-end">
-            <span class="text-xl font-bold text-blue-600">{{ order.total | currency : "USD" }}</span>
-          </div>
-        </div>
       </div>
-      }}
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-lg p-8 border border-gray-200">
+      @if(filter().length === 0) {
+        <div class="text-center py-20">
+          <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+          <h3 class="text-xl font-bold text-gray-700 mb-2">No hay pedidos</h3>
+          <p class="text-gray-500">Empieza creando un nuevo pedido</p>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          @for (order of filter(); track $index) {
+            <div
+              (click)="setOrderId(order.orderId)"
+              [routerLink]="['/detail', order.orderId]"
+              class="cursor-pointer group border border-gray-200 rounded-2xl bg-white hover:shadow-xl transition-all duration-300"
+            >
+              <div class="flex justify-between items-center px-5 py-4 border-b border-gray-100">
+                <div class="flex flex-col">
+                  <span class="text-lg font-bold text-gray-800 group-hover:text-emerald-600 transition">#{{ order.orderId }}</span>
+                  <span class="text-sm text-gray-500">Mesa {{ order.tableId }}</span>
+                </div>
+                <div class="flex gap-2 items-center">
+                  <span
+                    class="text-xs font-medium px-2 py-1 rounded-full"
+                    [ngClass]="{
+                      'bg-yellow-100 text-yellow-800': order.status === 'PENDIENTE',
+                      'bg-green-100 text-green-800': order.status === 'PAGADO'
+                    }"
+                  >
+                    {{ order.status }}
+                  </span>
+                  <button
+                    (click)="deleteOrder(order.orderId); $event.stopPropagation()"
+                    class="text-red-500 hover:text-red-600 transition"
+                  >
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="px-5 py-4 space-y-2">
+                <div class="flex justify-between text-sm text-gray-600">
+                  <span>Fecha:</span>
+                  <span class="font-medium">{{ order.orderDate | date : "dd/MM/yyyy HH:mm" }}</span>
+                </div>
+                <div class="flex justify-between text-sm text-gray-600">
+                  <span>Mesero:</span>
+                  <span class="font-medium">#{{ order.waiterId }}</span>
+                </div>
+                <div class="pt-3 text-right">
+                  <span class="text-xl font-bold text-blue-600">{{ order.total | currency : "USD" }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
     </div>
   </div>
 </div>

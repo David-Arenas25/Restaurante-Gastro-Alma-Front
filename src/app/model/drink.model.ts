@@ -3,5 +3,4 @@ export interface Drink {
     drinkName: string;
     drinkDescription: string;
     drinkPrice: number;
-    quantity:number
   }

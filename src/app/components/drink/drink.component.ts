@@ -41,26 +41,6 @@ export class DrinkComponent {
     })
   }
 
-//   saveOrder(drink:Drink){
-//     if(this.quantity.valid){
-//       const value = this.quantity.value
-//       if(value!==null){
-    
-//     this.drinkOrderService.save(this.orderId(),drink.drinkId,parseInt(value)).subscribe({
-//       next:(saved)=>{
-//         // alert('se guardo')
-//         this.quantity.setValue('')
-//         this.getAll()
-        
-//       },error:(error)=>{
-//         // alert('error al guardar la orden del platillo')
-//       }
-//     })
-
-//   }
-// }}
-
-
 emitDrinkOrder(drinkId:number){
   this.drink.emit(drinkId)
 }

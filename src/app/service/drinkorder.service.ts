@@ -21,7 +21,7 @@ quantity(orderId: number, drinkId: number) {
    }
   
    delete(orderId:number,drinkOrder:number){
-    return this.http.delete(`${this.API_URL}/drinkorders/delete?orderId=${orderId}&drinkId=${drinkOrder}`);  
+    return this.http.delete<void>(`${this.API_URL}/drinkorders/delete?orderId=${orderId}&drinkId=${drinkOrder}`);  
    }
 
    

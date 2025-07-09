@@ -17,6 +17,8 @@ export class DishorderComponent {
   orderId= input.required<number>();
   hasOrders = computed(() => this.dishOrders().length > 0)
   deleteOrder = output<string>()
+    addOrder = output<string>()
+
 
 
   ngOnInit() {
@@ -25,27 +27,34 @@ export class DishorderComponent {
   }
 getAll() {
   this.dishOrderService.viewDishOrders().subscribe({
-    next: (dishorder) => {
+    next: (dishOrders) => {
       const uniqueOrders: DishOrderAll[] = [];
-     dishorder.forEach((order) => {
-          if (
-            !uniqueOrders.find(
-              (u) =>
-                u.orderId === order.orderId &&
-                u.dishName === order.dishName &&
-                u.quantity === order.quantity &&
-                u.waiterName === order.waiterName
-            )
-          ) {
-            uniqueOrders.push(order);
-          }
-        });
-      const filter = uniqueOrders.filter(order => order.orderId === this.orderId())
-      this.dishOrders.set(filter);
-      this.quantity(); 
+
+      // Eliminar duplicados por orderId y dishName
+      dishOrders.forEach((order) => {
+        const alreadyExists = uniqueOrders.some(
+          (u) =>
+            u.orderId === order.orderId &&
+            u.dishName === order.dishName
+        );
+        if (!alreadyExists) {
+          uniqueOrders.push(order);
+        }
+      });
+
+      // Filtrar por el orderId actual
+      const filteredOrders = uniqueOrders.filter(
+        (order) => order.orderId === this.orderId()
+      );
+
+      // Establecer los pedidos filtrados
+      this.dishOrders.set(filteredOrders);
+
+      // Calcular cantidades u otras acciones
+      this.quantity();
     },
     error: (err) => {
-      console.error('Error al obtener pedidos de bebidas', err);
+      console.error('Error al obtener pedidos de platos', err);
     }
   });
 }
@@ -57,7 +66,6 @@ quantity() {
   this.dishOrders().forEach((dishOrders:DishOrderAll) => {
     this.dishOrderService.quantity(dishOrders.orderId, dishOrders.dishId).subscribe({
       next: (quantity) => {
-        console.log('Cantidad obtenida:', quantity);
         dishOrders.quantity = quantity;
               }
       }
@@ -80,10 +88,13 @@ quantity() {
  deletingOrder() {
     this.deleteOrder.emit('borrar');
   }
+    emitUpdateOrder(){
+    this.addOrder.emit('agregar')
+  }
   saveDishOrder(dishId:number){
       this.dishOrderService.save(this.orderId(),dishId,1).subscribe({
         next: (order)=>{
-          console.log('no quizi')
+          this.emitUpdateOrder()
           this.getAll()
         },error:(error)=>{
           // alert("error"+error)

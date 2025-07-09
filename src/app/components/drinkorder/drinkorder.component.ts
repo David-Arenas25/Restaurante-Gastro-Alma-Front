@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { DrinkorderService } from '../../service/drinkorder.service';
 import { DrinkOrderAll } from '../../model/drink.order.all.model';
 import { CommonModule } from '@angular/common';
@@ -19,45 +19,45 @@ export default class DrinkorderComponent {
   quantityValue!: number;
   drinkId!: number;
   orderId = input.required<number>();
-
+  addOrder = output<string>()
+  deleteOrder = output<string>()
   hasOrders = computed(() => this.drinkOrders().length > 0);
 
   ngOnInit() {
     this.getAll();
   }
   getAll() {
-    this.drinkOrderService.viewDrinkOrders().subscribe({
-      next: (drinkOrders) => {
-        if(!this.orderId()){
-          return
-        }
-        const uniqueOrders: DrinkOrderAll[] = [];
-        drinkOrders.forEach((order) => {
-          if (
-            !uniqueOrders.find(
-              (u) =>
-                u.orderId === order.orderId &&
-                u.drinkName === order.drinkName &&
-                u.quantity === order.quantity &&
-                u.waiterName === order.waiterName
-            )
-          ) {
-            uniqueOrders.push(order);
-          }
-        });
-        console.log(uniqueOrders,this.orderId())
-        const filter = uniqueOrders.filter(
-          (order) => order.orderId === this.orderId()
+  this.drinkOrderService.viewDrinkOrders().subscribe({
+    next: (drinkOrders:DrinkOrderAll[]) => {
+      const uniqueOrders: DrinkOrderAll[] = [];
+      drinkOrders.forEach((order) => {
+        const alreadyExists = uniqueOrders.some(
+          (u) =>
+            u.orderId === order.orderId &&
+            u.drinkName === order.drinkName
         );
-        this.drinkOrders.set(filter);
-        console.log(this.drinkOrders(), 'orders')
-        this.quantity();
-      },
-      error: (err) => {
-        console.error('Error al obtener pedidos de bebidas', err);
-      },
-    });
-  }
+        if (!alreadyExists) {
+          uniqueOrders.push(order);
+        }
+      });
+
+      // Filtrar por el orderId actual
+      const filteredOrders = uniqueOrders.filter(
+        (order) => order.orderId === this.orderId()
+      );
+
+      // Establecer los pedidos filtrados
+      this.drinkOrders.set(filteredOrders);
+
+      // Calcular cantidades u otras acciones
+      this.quantity();
+    },
+    error: (err) => {
+      console.error('Error al obtener pedidos de platos', err);
+    }
+  });
+}
+
 
   quantity() {
     this.drinkOrders().forEach((drinkOrders: DrinkOrderAll) => {
@@ -74,11 +74,12 @@ export default class DrinkorderComponent {
   deleteDrinkOrder(orderId: number, drinkId: number) {
     this.drinkOrderService.delete(orderId, drinkId).subscribe({
       next: (deleteOrder) => {
-        // alert('se borro' + deleteOrder)
+        alert()
+        this.emitDeleteOrder()
         this.getAll();
       },
       error: (error) => {
-        // alert("borrado")
+        console.log(error)
         this.getAll();
       },
     });
@@ -86,11 +87,18 @@ export default class DrinkorderComponent {
   saveDrinkOrder(drinkId:number){
     this.drinkOrderService.save(this.orderId(),drinkId,1).subscribe({
       next: (order)=>{
+        this.emitUpdateOrder()
         this.getAll()
       },error:(error)=>{
         
       }
     })
+  }
+emitDeleteOrder(){
+  this.deleteOrder.emit('borrar')
+}
+  emitUpdateOrder(){
+    this.addOrder.emit('agregar')
   }
 }
 

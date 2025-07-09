@@ -3,5 +3,5 @@ export interface Dish {
     dishName: string;
     dishDescription: string;
     dishPrice: number;
-    quantity: number
+
   }

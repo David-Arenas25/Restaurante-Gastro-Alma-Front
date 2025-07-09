@@ -1,14 +1,8 @@
-import { ChangeDetectorRef, Component, computed, inject, input, output, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { OrderService } from '../../service/order.service';
 import { Order } from '../../model/order.model';
 import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { DishComponent } from '../dish/dish.component';
-import { DrinkComponent } from '../drink/drink.component';
-import DrinkorderComponent from '../drinkorder/drinkorder.component';
-import { DishorderComponent } from '../dishorder/dishorder.component';
-import { WaiterComponent } from '../waiter/waiter.component';
-import { filter } from 'rxjs';
 import { ActivatedRoute, RouterLinkWithHref } from '@angular/router';
 
 @Component({
@@ -41,17 +35,33 @@ export default class OrderComponent {
   waiterId = new FormControl('');
   orderIdTable = input<number>(0)
   showOrderPanel = true
-  slug!:number
+  filter = signal<Order[]>([])
+  slug = 0
   route = inject(ActivatedRoute)
+  tableMessage = `No ha seleccionado Mesa`
 
   ngOnInit() {
+    let param =  localStorage.getItem('tableId')
     this.route.paramMap.subscribe((params:any) => {
       const slugParam = params.get('slug');
       if (slugParam) {
         this.slug = +slugParam;
       }
-      this.getAll();
-    });
+      else if(param){
+        
+        this.slug = +param
+        
+      }else{
+        this.tableMessage = 'No ha seleccionado ninguna mesa'
+      } 
+      
+    })
+    
+      
+
+    this.tableMessage = `Mesa ${this.slug}`
+    this.getAll()
+  
   }
   getById(orderId: number) {
     if (orderId) {
@@ -80,27 +90,23 @@ export default class OrderComponent {
           status: 'PENDIENTE',
           waiterId: parseInt(value),
           cambio: 0,
-          tableId: this.orderIdTable(),
+          tableId: this.slug,
         };
         const getWaiter = this.orderService.save(newOrder).subscribe({
           next: (order) => {
-            // alert('orden guardada '+ order.orderId)
             this.getAll();
             this.waiterId.setValue('');
           },
           error: (error) => {
-            // alert('error su orden no se guardó'+error)
           },
         });
       } else {
-        // alert('ingrese id de mesero por favor')
       }
     }
   }
 
   deleteOrder(orderId: number) {
     return this.orderService.delete(orderId).subscribe({
-      // next: order => {alert('se borro ' + orderId)
       next: (order) => {
         this.getAll();
       },
@@ -121,17 +127,10 @@ export default class OrderComponent {
     this.orderService.getAll().subscribe({
       next: (value) => {
         this.orders.set(value);
+          this.filterView();
       
       },
     });
-  }
-  activeOrderPayment(orderId: number) {
-    this.updatePrice(orderId);
-    if (this.activePaymentId === orderId) {
-      this.activePaymentId = null;
-    } else {
-      this.activePaymentId = orderId;
-    }
   }
 
   updatePrice(orderId: number) {
@@ -148,37 +147,43 @@ export default class OrderComponent {
   filterView() {
     const viewAllCopy = this.orders();
     const stateCopy = this.state();
+       if (this.slug) {
+ 
+      this.filter.set(viewAllCopy.filter((order) => order.tableId === this.slug))
+      this.oneOrder = this.filter()[0]
+     
 
-   
-    if(stateCopy === 'todos'){
-      return viewAllCopy.reverse();
+ 
+    }else{
+      
+      this.filter.set(this.orders())
     }
-
-    if (stateCopy === 'id' && this.orderId.valid) {
-      const idValue = this.orderId.value;
-      if (idValue !== null) {
-        const vAllCopy = viewAllCopy.filter(
-          (order) => order.orderId === parseInt(idValue)
-        );
-        return vAllCopy;
-      }
-    }
-    if (stateCopy === 'date') {
-      const today = new Date().toISOString().slice(0, 10);
-
-      const todayOrders = viewAllCopy.filter((order) => {
-        return new Date(order.orderDate).toISOString().slice(0, 10) === today;
-      });
-
-      return todayOrders;
-    }
-     if (this.slug) {
-      const filter  = viewAllCopy.filter((order) => order.tableId === this.slug);
-      this.oneOrder = filter[0]
-      return filter;
-    }
-
-    return viewAllCopy;
   }
 
+  searchById() {
+        if ( this.orderId.valid && this.orderId.value !== '') {
+      const idValue = this.orderId.value;
+      if (idValue !== null) {
+        this.filter.set(this.orders().filter(
+          (order) => order.orderId === parseInt(idValue)))
+  }else{
+    const idFilter = this.orders().filter(order => order.tableId === this.slug)
+    this.filter.set(idFilter)
+  }
+        }}
+
+
+  setOrderId(orderId: number) {
+    localStorage.setItem('orderId', orderId.toString())
+  }
+
+  listAllOrders(event: Event){
+    if (event.type === 'click') {
+      this.filter.set(this.orders())
+      this.tableMessage = 'Todos Los Pedidos'
+    } else if (event.type === 'blur') {
+      this.filter.set(this.orders().filter(order => order.tableId === this.slug))
+      this.tableMessage = `Mesa ${this.slug}`
+    }
+  }
 }

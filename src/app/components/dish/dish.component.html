@@ -8,6 +8,7 @@
   <div class="p-6">
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
       @for (dish of dishes(); track dish.dishId) {
+        @if(dish && dish.dishId){
       <button 
         (click)="emitDishOrder(dish.dishId)"
         class="bg-white rounded-2xl border border-gray-200 hover:border-red-400 hover:shadow-lg transition-all duration-200 text-left overflow-hidden group">
@@ -25,7 +26,7 @@
           </div>
         </div>
       </button>
-      }
+      }}
     </div>
   </div>
   @if (alerta) {

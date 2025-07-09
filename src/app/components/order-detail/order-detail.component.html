@@ -45,7 +45,6 @@
 </header>
 
 <main class="flex flex-col md:flex-row gap-10 p-10 bg-gradient-to-br from-gray-100 via-gray-50 to-emerald-50 min-h-[70vh]">
-  <!-- Sección de Platos y Bebidas (Pedidos actuales) -->
   <section *ngIf="!showPayment"  class="w-1/2 flex-1 flex flex-col gap-8">
      <div class="bg-white/90 rounded-3xl shadow-2xl border border-gray-200/70 flex flex-col hover:shadow-cyan-100 transition-shadow">
       <div class="p-1 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-t-3xl"></div>
@@ -53,7 +52,7 @@
         <h4 class="text-2xl font-extrabold text-gray-800 flex items-center gap-2">
           <i class="fas fa-cocktail text-blue-500"></i>Bebidas
         </h4>
-        <app-drinkorder [orderId]="slug" class="w-full" />
+        <app-drinkorder (deleteOrder)="updatePrice(orderDetail().orderId)" (addOrder)="updatePrice(orderDetail().orderId)" [orderId]="slug" class="w-full" />
       </div>
     </div>
     <div class= "bg-white/90 rounded-3xl shadow-2xl border border-gray-200/70 flex flex-col hover:shadow-emerald-100 transition-shadow">
@@ -62,7 +61,7 @@
         <h4 class="text-2xl font-extrabold text-gray-800 flex items-center gap-2">
           <i class="fas fa-drumstick-bite text-orange-500"></i>Platos
         </h4>
-        <app-dishorder [orderId]="slug" class="w-full" (deleteOrder)="updatePrice(orderDetail().orderId)" />
+        <app-dishorder [orderId]="slug" class="w-full" (addOrder)="updatePrice(orderDetail().orderId)" (deleteOrder)="updatePrice(orderDetail().orderId)" />
       </div>
     </div>
    
@@ -70,55 +69,67 @@
 
 
 
-  <!-- Sección de Pago -->
   <section *ngIf="showPayment" class="flex-1 flex items-center justify-center">
-    <div class="w-full max-w-lg bg-white/95 rounded-3xl shadow-2xl border border-emerald-200/50 p-12 flex flex-col gap-10">
-      <div class="flex items-center justify-center gap-4 mb-4">
-        <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-          <i class="fas fa-credit-card text-white text-3xl"></i>
-        </div>
-        <h3 class="text-3xl font-black text-gray-800">Finalizar Pago</h3>
+  <div class="w-full max-w-lg bg-white/95 rounded-3xl shadow-2xl border border-emerald-200/50 p-12 flex flex-col gap-10">
+    <div class="flex items-center justify-center gap-4 mb-4">
+      <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+        <i class="fas fa-credit-card text-white text-3xl"></i>
       </div>
-      <form class="flex flex-col gap-7">
-        <div>
-          <label for="totalToPay" class="block text-lg font-bold text-gray-700 mb-2">Total a Pagar</label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
-            </span>
-            <input
-              type="number"
-              id="totalToPay"
-              class="w-full pl-12 pr-4 py-5 text-3xl font-extrabold text-center bg-white border-2 border-emerald-200 rounded-xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-200 shadow-sm hover:shadow-md"
-              placeholder="0.00"
-              step="0.01"
-              min="0"
-              [formControl]="quantity"
-            />
-          </div>
-        </div>
-        <button
-          (click)="pay(orderDetail().orderId, orderDetail().status)"
-          [disabled]="orderDetail().status === 'PAGADO' || orderDetail().status === 'CAMBIO'"
-          type="button"
-          [ngClass]="{
-            'w-full py-5 px-8 font-black text-2xl rounded-xl shadow-lg transform transition-all duration-200 border-2': true,
-            'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white hover:shadow-xl hover:scale-[1.02] border-green-500/50 hover:border-green-400 cursor-pointer': orderDetail().status !== 'PAGADO' && orderDetail().status !== 'CAMBIO',
-            'bg-gray-400 text-gray-200 border-gray-300 cursor-not-allowed opacity-60': orderDetail().status === 'PAGADO' || orderDetail().status === 'CAMBIO'
-          }"
-        >
-          <div class="flex items-center justify-center gap-4">
-            <i class="fas fa-money-bill-wave text-3xl"></i>
-            <span>
-              {{ orderDetail().status === 'PAGADO' ? 'Ya Pagado' : orderDetail().status === 'CAMBIO' ? 'En Cambio' : 'Procesar Pago' }}
-            </span>
-          </div>
-        </button>
-        <div class="flex items-center justify-center gap-2 text-base text-gray-500 mt-2">
-          <i class="fas fa-shield-alt text-green-500"></i>
-          <span>Pago seguro y protegido</span>
-        </div>
-      </form>
+      <h3 class="text-3xl font-black text-gray-800">Finalizar Pago</h3>
     </div>
-  </section>
+    <form class="flex flex-col gap-7">
+      <div>
+        <label for="totalToPay" class="block text-lg font-bold text-gray-700 mb-2">Total a Pagar</label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
+          </span>
+          <input
+            type="number"
+            id="totalToPay"
+            class="w-full pl-12 pr-4 py-5 text-3xl font-extrabold text-center bg-white border-2 border-emerald-200 rounded-xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-200 shadow-sm hover:shadow-md"
+            placeholder="0.00"
+            step="0.01"
+            min="0"
+            [formControl]="quantity"
+          />
+        </div>
+      </div>
+
+      <!-- Botón de Pago -->
+      <button
+        (click)="pay(orderDetail().orderId, orderDetail().status)"
+        [disabled]="orderDetail().status === 'PAGADO' || orderDetail().status === 'CAMBIO'"
+        type="button"
+        [ngClass]="{
+          'w-full py-5 px-8 font-black text-2xl rounded-xl shadow-lg transform transition-all duration-200 border-2': true,
+          'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white hover:shadow-xl hover:scale-[1.02] border-green-500/50 hover:border-green-400 cursor-pointer': orderDetail().status !== 'PAGADO' && orderDetail().status !== 'CAMBIO',
+          'bg-gray-400 text-gray-200 border-gray-300 cursor-not-allowed opacity-60': orderDetail().status === 'PAGADO' || orderDetail().status === 'CAMBIO'
+        }"
+      >
+        <div class="flex items-center justify-center gap-4">
+          <i class="fas fa-money-bill-wave text-3xl"></i>
+          <span>
+            {{ orderDetail().status === 'PAGADO' ? 'Ya Pagado' : orderDetail().status === 'CAMBIO' ? 'En Cambio' : 'Procesar Pago' }}
+          </span>
+        </div>
+      </button>
+
+      <!-- Botón Volver -->
+      <button
+        type="button"
+        (click)="showPayment = false"
+        class="w-full py-4 px-6 font-semibold text-lg rounded-xl bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 hover:shadow-md transition-all duration-200"
+      >
+        ← Volver
+      </button>
+
+      <div class="flex items-center justify-center gap-2 text-base text-gray-500 mt-2">
+        <i class="fas fa-shield-alt text-green-500"></i>
+        <span>Pago seguro y protegido</span>
+      </div>
+    </form>
+  </div>
+</section>
+
 </main>

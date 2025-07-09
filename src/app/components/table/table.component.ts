@@ -42,19 +42,23 @@ export default class TableComponent {
 
  cambiarEstadoMesa(idMesa: number, estadoActual: string): void {
   if(estadoActual === 'disponible'){
-    estadoActual = 'ocupado'
-  }else if(estadoActual === 'ocupado'){
+    estadoActual = 'ocupada'
+  }else if(estadoActual === 'ocupada'){
     estadoActual = 'disponible'
   }
   this.estadoMesa = estadoActual
   this.tableService.cambiarEstadoMesa(idMesa, estadoActual).subscribe({
     next: () => {
-      this.getAll(); // Actualiza la lista de mesas
+      this.getAll(); 
     },
     error: err => {
       console.error('Error al cambiar el estado de la mesa:', err);
     }
   });
+}
+
+setTableId(tableId: number){
+  localStorage.setItem('tableId', tableId.toString())
 }
 
     }
