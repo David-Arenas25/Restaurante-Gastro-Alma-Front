@@ -11,10 +11,8 @@ import { ActivatedRoute, RouterLinkWithHref } from '@angular/router';
         DatePipe,
         ReactiveFormsModule,
         CurrencyPipe,
-        NgClass,
+        NgClass,|
         RouterLinkWithHref,
-        
-      
     ],
     templateUrl: './order.component.html',
     styleUrl: './order.component.css'
@@ -56,13 +54,25 @@ export default class OrderComponent {
       } 
       
     })
-    
+   
       
 
     this.tableMessage = `Mesa ${this.slug}`
     this.getAll()
   
   }
+   
+    updateStatus(status:string,orderId:number){
+      if(status=== 'PENDIENTE'){
+        status = 'ENTREGADO'
+      }if(status === 'ENTREGADO'){
+        status = 'PENDIENTE'
+      }
+    
+      this.orderService.updateStatus(status,orderId).subscribe({next:()=>{
+        alert('ok')
+      }})
+    }
   getById(orderId: number) {
     if (orderId) {
       this.orderService.getById(orderId).subscribe({

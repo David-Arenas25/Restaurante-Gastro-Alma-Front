@@ -45,7 +45,7 @@ export default class OrderDetailComponent {
   showOrderPanel = true;
   showPanel = output<boolean>();
   slug!: number;
-constructor(private router:Router){}
+  router = inject(Router)
 
  ngOnInit() {
     let param =  localStorage.getItem('orderId')

@@ -1,5 +1,5 @@
-<div class="min-h-screen bg-gray-50 py-10 px-4">
-  <div class="max-w-6xl mx-auto">
+<div class=" bg-gray-50 py-10 px-4">
+  <div class="">
     <div class="bg-white shadow-lg rounded-3xl p-8 border border-gray-200 mb-10">
       <h1 class="text-3xl font-extrabold text-emerald-600 text-center mb-6">{{ tableMessage }}</h1>
 
@@ -56,6 +56,7 @@
                 </div>
                 <div class="flex gap-2 items-center">
                   <span
+                  (click)="updateStatus(order.status,order.orderId); $event.stopPropagation()"
                     class="text-xs font-medium px-2 py-1 rounded-full"
                     [ngClass]="{
                       'bg-yellow-100 text-yellow-800': order.status === 'PENDIENTE',
