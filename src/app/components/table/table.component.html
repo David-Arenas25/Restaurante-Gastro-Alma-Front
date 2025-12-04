@@ -3,7 +3,7 @@
   @for (table of tables(); track $index) {
     <button
       (click)="setTableId(table.tableId)"
-      [routerLink]="['/orders', table.tableId]"
+      [routerLink]="['/orders']"
       class="group w-80 h-72 bg-white/70 backdrop-blur-lg shadow-xl hover:shadow-2xl rounded-2xl p-6 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 relative border border-white/60 flex flex-col justify-between items-center text-center overflow-hidden">
 
       <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-50 group-hover:opacity-70 transition-opacity duration-300"></div>

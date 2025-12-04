@@ -8,8 +8,8 @@ import { DrinkOrder } from '../model/drink.order.model';
 })
 export class DrinkorderService extends BasehttpService {
 
-  viewDrinkOrders(){
-    return this.http.get<DrinkOrderAll[]>(`${this.API_URL}/drinkorders/view`)
+  viewDrinkOrders(idPedido:number) {
+    return this.http.post<DrinkOrderAll[]>(`${this.API_URL}/drinkorders/view?idPedido=${idPedido}`,{})
    }
 
 quantity(orderId: number, drinkId: number) {

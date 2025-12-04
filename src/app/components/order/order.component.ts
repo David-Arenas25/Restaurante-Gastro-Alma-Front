@@ -4,18 +4,20 @@ import { Order } from '../../model/order.model';
 import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLinkWithHref } from '@angular/router';
+import { OrderStatusService } from 'src/app/service/order-status.service';
 
 @Component({
-    selector: 'app-order',
-    imports: [
-        DatePipe,
-        ReactiveFormsModule,
-        CurrencyPipe,
-        NgClass,|
-        RouterLinkWithHref,
-    ],
-    templateUrl: './order.component.html',
-    styleUrl: './order.component.css'
+  selector: 'app-order',
+  standalone: true,
+  imports: [
+    DatePipe,
+    CurrencyPipe,
+    NgClass,
+    ReactiveFormsModule,
+    RouterLinkWithHref
+  ],
+  templateUrl: './order.component.html',
+  styleUrl: './order.component.css'
 })
 export default class OrderComponent {
   orderService = inject(OrderService);
@@ -37,42 +39,35 @@ export default class OrderComponent {
   slug = 0
   route = inject(ActivatedRoute)
   tableMessage = `No ha seleccionado Mesa`
+  orderStatus = inject(OrderStatusService);
 
   ngOnInit() {
-    let param =  localStorage.getItem('tableId')
-    this.route.paramMap.subscribe((params:any) => {
-      const slugParam = params.get('slug');
-      if (slugParam) {
-        this.slug = +slugParam;
-      }
-      else if(param){
-        
-        this.slug = +param
-        
-      }else{
-        this.tableMessage = 'No ha seleccionado ninguna mesa'
-      } 
-      
-    })
-   
-      
-
-    this.tableMessage = `Mesa ${this.slug}`
     this.getAll()
   
   }
    
-    updateStatus(status:string,orderId:number){
-      if(status=== 'PENDIENTE'){
-        status = 'ENTREGADO'
-      }if(status === 'ENTREGADO'){
-        status = 'PENDIENTE'
-      }
-    
-      this.orderService.updateStatus(status,orderId).subscribe({next:()=>{
-        alert('ok')
-      }})
+    updateStatus(status: string, orderId: number) {
+  let newStatus: string;
+  
+  if (status === 'PENDIENTE') {
+    newStatus = 'ENTREGADO';
+  } else if (status === 'ENTREGADO') {
+    newStatus = 'PENDIENTE';
+  } else {
+    // Si tiene otro estado, mantener el estado actual o definir un comportamiento por defecto
+    newStatus = status;
+  }
+
+  this.orderService.updateStatus(orderId, newStatus).subscribe({
+    next: () => {
+      this.getAll();
+      console.log(this.orders());
+    },
+    error: (error) => {
+      console.error('Error al actualizar el estado:', error);
     }
+  });
+}
   getById(orderId: number) {
     if (orderId) {
       this.orderService.getById(orderId).subscribe({
@@ -100,7 +95,7 @@ export default class OrderComponent {
           status: 'PENDIENTE',
           waiterId: parseInt(value),
           cambio: 0,
-          tableId: this.slug,
+          tableId: this.orderStatus.tableId,
         };
         const getWaiter = this.orderService.save(newOrder).subscribe({
           next: (order) => {
@@ -146,54 +141,37 @@ export default class OrderComponent {
   updatePrice(orderId: number) {
     if (orderId !== null) {
       this.orderService.calculateTotal(orderId).subscribe({
-        next: (total) => {
-          if (this.oneOrder && this.oneOrder.orderId) {
-          }
-        },
       });
     }
   }
 
-  filterView() {
-    const viewAllCopy = this.orders();
-    const stateCopy = this.state();
-       if (this.slug) {
- 
-      this.filter.set(viewAllCopy.filter((order) => order.tableId === this.slug))
-      this.oneOrder = this.filter()[0]
-     
+filterView() {
+  const status = this.orderStatus.tableId;
 
- 
-    }else{
-      
-      this.filter.set(this.orders())
-    }
-  }
+  status
+    ? this.orderService.updateStatus(status).subscribe({
+        next: (viewAllCopy) => {
+          this.filter.set(viewAllCopy);
+        }
+      })
+    : this.filter.set(this.orders());
+}
+
 
   searchById() {
-        if ( this.orderId.valid && this.orderId.value !== '') {
-      const idValue = this.orderId.value;
-      if (idValue !== null) {
-        this.filter.set(this.orders().filter(
-          (order) => order.orderId === parseInt(idValue)))
-  }else{
-    const idFilter = this.orders().filter(order => order.tableId === this.slug)
-    this.filter.set(idFilter)
-  }
-        }}
+    const idValue = this.orderId.value;
+    if(idValue){
+    const searchFilter = this.orders().filter(
+    (order) => order.orderId.toString().includes(idValue))
+    this.filter.set(searchFilter)
+    }else{
+      this.filterView()
+    }}
 
 
   setOrderId(orderId: number) {
-    localStorage.setItem('orderId', orderId.toString())
+    this.orderStatus.orderId = orderId;
   }
 
-  listAllOrders(event: Event){
-    if (event.type === 'click') {
-      this.filter.set(this.orders())
-      this.tableMessage = 'Todos Los Pedidos'
-    } else if (event.type === 'blur') {
-      this.filter.set(this.orders().filter(order => order.tableId === this.slug))
-      this.tableMessage = `Mesa ${this.slug}`
-    }
-  }
+
 }

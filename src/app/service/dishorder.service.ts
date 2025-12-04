@@ -8,8 +8,8 @@ import { DishOrder } from '../model/dish.order.model';
 })
 export class DishorderService extends BasehttpService {
 
-  viewDishOrders(){
-    return this.http.get<DishOrderAll[]>(`${this.API_URL}/dishorders/view`)
+  viewDishOrders(idPedido:number){
+    return this.http.post<DishOrderAll[]>(`${this.API_URL}/dishorders/view?idPedido=${idPedido}`,{})
    }
 
    save(orderId:number, dishId:number, quantity:number){

@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-drink',
+  standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './add-drink.component.html',
   styleUrl: './add-drink.component.css'
@@ -33,7 +34,7 @@ export default class AddDrinkComponent {
     }
     this.drinkService.save(drink).subscribe({
       next: () => {
-        alert('Drink saved')
+  
         this.getAll()
       }
     })
@@ -42,7 +43,6 @@ export default class AddDrinkComponent {
      save(drink:Drink){
     this.drinkService.save(drink).subscribe({
       next: (response) => {
-        alert('Drink saved successfully')
         this.getAll()
       }
     })

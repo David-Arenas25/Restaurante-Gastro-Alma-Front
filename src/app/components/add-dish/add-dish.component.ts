@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-dish',
+  standalone: true,
   imports: [FormsModule, CommonModule,ReactiveFormsModule],
   templateUrl: './add-dish.component.html',
   styleUrl: './add-dish.component.css'
@@ -32,7 +33,6 @@ export default class AddDishComponent {
     }
     this.dishService.saveDish(dish).subscribe({
       next: () => {
-        alert('Dish saved')
         this.getAll()
       }
     })
@@ -41,7 +41,7 @@ export default class AddDishComponent {
   save(dish:Dish){
      this.dishService.saveDish(dish).subscribe({
       next: () => {
-        alert('Dish saved')
+   
         this.getAll()
       }
     })

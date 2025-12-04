@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-waiter',
+   standalone: true,
   imports: [FormsModule,CommonModule,ReactiveFormsModule],
   templateUrl: './add-waiter.component.html',
   styleUrl: './add-waiter.component.css'
@@ -41,7 +42,7 @@ export default class AddWaiterComponent {
     }
     this.waiterService.save(waiter).subscribe({
       next: (response) => {
-        alert('Waiter saved successfully')
+   
         this.getAll()
       }
     })
@@ -51,7 +52,7 @@ export default class AddWaiterComponent {
   save(waiter:Waiter){
     this.waiterService.save(waiter).subscribe({
       next: (response) => {
-        alert('Waiter saved successfully')
+  
         this.getAll()
       }
     })

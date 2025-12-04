@@ -4,6 +4,7 @@ import { TableService } from '../../service/table.service';
 import { Table } from '../../model/table.model';
 import OrderComponent from '../order/order.component';
 import { RouterLinkWithHref } from '@angular/router';
+import { OrderStatusService } from 'src/app/service/order-status.service';
 
 
 @Component({
@@ -18,7 +19,7 @@ export default class TableComponent {
   selectedTable!:number
   showOrdersPanel = true;
   estadoMesa!: string;
-  constructor(private readonly tableService: TableService){}
+  constructor(private readonly orderStatus:OrderStatusService, private readonly tableService: TableService){}
   ngOnInit() {
     this.getAll()
   }
@@ -58,7 +59,7 @@ export default class TableComponent {
 }
 
 setTableId(tableId: number){
-  localStorage.setItem('tableId', tableId.toString())
+  this.orderStatus.tableId = tableId;
 }
 
     }

@@ -26,7 +26,7 @@ export class DishorderComponent {
 
   }
 getAll() {
-  this.dishOrderService.viewDishOrders().subscribe({
+  this.dishOrderService.viewDishOrders(this.orderId()).subscribe({
     next: (dishOrders) => {
       const uniqueOrders: DishOrderAll[] = [];
 
@@ -76,11 +76,10 @@ quantity() {
   deleteDrinkOrder(orderId:number,dishId:number){
   this.dishOrderService.delete(orderId,dishId).subscribe({
     next: (deleteOrder) =>{
-      // alert('se borro' + deleteOrder)
+
       this.deletingOrder()
       this.getAll()
     },error: (error)=>{
-      // alert("borrado")
       this.getAll()
     }
   })
@@ -97,8 +96,8 @@ quantity() {
           this.emitUpdateOrder()
           this.getAll()
         },error:(error)=>{
-          // alert("error"+error)
-          
+
+        
         }
       })
     }}

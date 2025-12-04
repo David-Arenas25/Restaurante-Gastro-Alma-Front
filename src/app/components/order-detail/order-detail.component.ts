@@ -7,12 +7,13 @@ import { DishComponent } from '../dish/dish.component';
 import { DrinkComponent } from '../drink/drink.component';
 import { DishorderComponent } from '../dishorder/dishorder.component';
 import DrinkorderComponent from '../drinkorder/drinkorder.component';
-import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
+import { ActivatedRoute, Route, Router, RouterLinkWithHref } from '@angular/router';
+import { OrderStatusService } from 'src/app/service/order-status.service';
 
 
 @Component({
   selector: 'app-order-detail',
-  standalone: true,
+  standalone:true,
   imports: [
     CommonModule,
     RouterLinkWithHref,
@@ -28,8 +29,6 @@ import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
 
 })
 export default class OrderDetailComponent {
-  private route = inject(ActivatedRoute);
-  private orderService = inject(OrderService);
   orderDetail = signal<Order>({} as Order);
   orders = signal<Order[]>([]);
   activePaymentId: number | null = null;
@@ -44,24 +43,10 @@ export default class OrderDetailComponent {
   waiterId = new FormControl('');
   showOrderPanel = true;
   showPanel = output<boolean>();
-  slug!: number;
-  router = inject(Router)
+  constructor(readonly orderStatus:OrderStatusService,private readonly orderService:OrderService,private router:Router) {}
 
  ngOnInit() {
-    let param =  localStorage.getItem('orderId')
-    this.route.paramMap.subscribe((params:any) => {
-      const slugParam = params.get('slug');
-      if (slugParam) {
-        this.slug = +slugParam;
-      }else if(param){
-        this.slug = +parseInt(param) 
-      }else{
-        alert('No ha seleccionado un pedido'); 
-        this.router.navigate(['/orders'])
-      }   
-
- })
-    this.getById(this.slug)
+    
   }
   showPay() {
     this.showPayment = true;
@@ -70,9 +55,9 @@ export default class OrderDetailComponent {
 
   }
 
-  getById(slug: number) {
-    if (slug) {
-      this.orderService.getById(slug).subscribe({
+  getById(orderStatus: number) {
+    if (orderStatus) {
+      this.orderService.getById(orderStatus).subscribe({
         next: (data) => {
           this.orderDetail.set(data);
           this.updatePrice(data.orderId)

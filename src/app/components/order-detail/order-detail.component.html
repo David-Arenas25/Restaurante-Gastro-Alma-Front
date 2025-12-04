@@ -1,3 +1,5 @@
+
+
 <header class="relative bg-gradient-to-br from-emerald-800 via-emerald-900 to-gray-900 text-white shadow-2xl rounded-b-3xl overflow-hidden">
   <div class="absolute inset-0 opacity-25 pointer-events-none">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_60%_40%,rgba(255,255,255,0.10),transparent_60%)]"></div>
@@ -32,7 +34,7 @@
           </span>
         </div>
         <div class="group relative">
-          <button [routerLink]="['/orders', orderDetail().tableId]" class="p-4 bg-white/10 hover:bg-red-500/90 rounded-full shadow-lg border border-red-400/30 transition-all duration-200 focus:outline-none">
+          <button [routerLink]="['/orders']" class="p-4 bg-white/10 hover:bg-red-500/90 rounded-full shadow-lg border border-red-400/30 transition-all duration-200 focus:outline-none">
             <i class="fas fa-times text-2xl text-red-500 group-hover:text-white transition"></i>
           </button>
           <span class="absolute left-1/2 -translate-x-1/2 mt-2 px-3 py-1 rounded bg-gray-900 text-white text-xs opacity-0 group-hover:opacity-100 transition pointer-events-none z-10 whitespace-nowrap">
@@ -52,7 +54,7 @@
         <h4 class="text-2xl font-extrabold text-gray-800 flex items-center gap-2">
           <i class="fas fa-cocktail text-blue-500"></i>Bebidas
         </h4>
-        <app-drinkorder (deleteOrder)="updatePrice(orderDetail().orderId)" (addOrder)="updatePrice(orderDetail().orderId)" [orderId]="slug" class="w-full" />
+        <app-drinkorder (deleteOrder)="updatePrice(orderDetail().orderId)" (addOrder)="updatePrice(orderDetail().orderId)" [orderId]="orderStatus.orderId" class="w-full" />
       </div>
     </div>
     <div class= "bg-white/90 rounded-3xl shadow-2xl border border-gray-200/70 flex flex-col hover:shadow-emerald-100 transition-shadow">
@@ -61,7 +63,7 @@
         <h4 class="text-2xl font-extrabold text-gray-800 flex items-center gap-2">
           <i class="fas fa-drumstick-bite text-orange-500"></i>Platos
         </h4>
-        <app-dishorder [orderId]="slug" class="w-full" (addOrder)="updatePrice(orderDetail().orderId)" (deleteOrder)="updatePrice(orderDetail().orderId)" />
+        <app-dishorder [orderId]="orderStatus.orderId" class="w-full" (addOrder)="updatePrice(orderDetail().orderId)" (deleteOrder)="updatePrice(orderDetail().orderId)" />
       </div>
     </div>
    

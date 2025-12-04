@@ -27,36 +27,11 @@ export default class DrinkorderComponent {
     this.getAll();
   }
   getAll() {
-  this.drinkOrderService.viewDrinkOrders().subscribe({
-    next: (drinkOrders:DrinkOrderAll[]) => {
-      const uniqueOrders: DrinkOrderAll[] = [];
-      drinkOrders.forEach((order) => {
-        const alreadyExists = uniqueOrders.some(
-          (u) =>
-            u.orderId === order.orderId &&
-            u.drinkName === order.drinkName
-        );
-        if (!alreadyExists) {
-          uniqueOrders.push(order);
-        }
-      });
-
-      // Filtrar por el orderId actual
-      const filteredOrders = uniqueOrders.filter(
-        (order) => order.orderId === this.orderId()
-      );
-
-      // Establecer los pedidos filtrados
-      this.drinkOrders.set(filteredOrders);
-
-      // Calcular cantidades u otras acciones
-      this.quantity();
-    },
-    error: (err) => {
-      console.error('Error al obtener pedidos de platos', err);
-    }
-  });
-}
+  this.drinkOrderService.viewDrinkOrders(this.orderId()).subscribe({
+    next: (drinkOrders) => {
+      this.drinkOrders.set(drinkOrders);
+      this.quantity()
+}})}
 
 
   quantity() {
@@ -74,7 +49,7 @@ export default class DrinkorderComponent {
   deleteDrinkOrder(orderId: number, drinkId: number) {
     this.drinkOrderService.delete(orderId, drinkId).subscribe({
       next: (deleteOrder) => {
-        alert()
+      
         this.emitDeleteOrder()
         this.getAll();
       },
