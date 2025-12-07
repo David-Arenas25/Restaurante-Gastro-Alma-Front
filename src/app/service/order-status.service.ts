@@ -7,4 +7,6 @@ export class OrderStatusService {
   tableId!:number
   orderId!:number
   constructor() { }
+  
+  
 }

@@ -4,6 +4,7 @@ import { BasehttpService } from './basehttp.service';
 import { Order } from '../model/order.model';
 import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -36,10 +37,20 @@ export class OrderService extends BasehttpService {
     return this.http.delete(`${this.API_URL}/orders/delete/${id}`)
   
    }
+     updateStatuss(params: { idMesa: string; estado?: string }) {
+    const url = new URL(`${this.API_URL}/orders/filtrar`);
+    if (params.idMesa) {
+      url.searchParams.set('ID_MESA', params.idMesa.toString());
+    }
+    if (params.estado) {
+      url.searchParams.set('categorySlug', params.estado);
+    }
+    return this.http.get<Order[]>(url.toString());
+  }
  
 updateStatus(idMesa: number, estado?: string): Observable<Order[]> {
   if(!estado){
-    estado = ''
+    estado = 'null'
   }
   return this.http.get<Order[]>(`${this.API_URL}/orders/filtrar?ESTADO=${estado}&ID_MESA=${idMesa}`,{})
 

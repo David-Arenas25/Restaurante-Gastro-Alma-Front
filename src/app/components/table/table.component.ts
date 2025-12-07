@@ -4,8 +4,8 @@ import { TableService } from '../../service/table.service';
 import { Table } from '../../model/table.model';
 import OrderComponent from '../order/order.component';
 import { RouterLinkWithHref } from '@angular/router';
-import { OrderStatusService } from 'src/app/service/order-status.service';
-
+import { OrderStatusService } from '../../service/order-status.service';
+OrderStatusService
 
 @Component({
   selector: 'app-table',

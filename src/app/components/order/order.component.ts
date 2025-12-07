@@ -4,8 +4,8 @@ import { Order } from '../../model/order.model';
 import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLinkWithHref } from '@angular/router';
-import { OrderStatusService } from 'src/app/service/order-status.service';
-
+import { OrderStatusService } from '../../service/order-status.service';
+//import { resource } from '@angular/core';
 @Component({
   selector: 'app-order',
   standalone: true,
@@ -36,38 +36,21 @@ export default class OrderComponent {
   orderIdTable = input<number>(0)
   showOrderPanel = true
   filter = signal<Order[]>([])
-  slug = 0
   route = inject(ActivatedRoute)
   tableMessage = `No ha seleccionado Mesa`
   orderStatus = inject(OrderStatusService);
+  $slug = input.required<string>({alias: 'slug'});  
 
   ngOnInit() {
     this.getAll()
   
-  }
-   
-    updateStatus(status: string, orderId: number) {
-  let newStatus: string;
-  
-  if (status === 'PENDIENTE') {
-    newStatus = 'ENTREGADO';
-  } else if (status === 'ENTREGADO') {
-    newStatus = 'PENDIENTE';
-  } else {
-    // Si tiene otro estado, mantener el estado actual o definir un comportamiento por defecto
-    newStatus = status;
-  }
 
-  this.orderService.updateStatus(orderId, newStatus).subscribe({
-    next: () => {
-      this.getAll();
-      console.log(this.orders());
-    },
-    error: (error) => {
-      console.error('Error al actualizar el estado:', error);
-    }
-  });
-}
+  }
+  // productsResource = resource({
+  //   request: () => ({ idMesa: this.$slug() }),
+  //   loader: ({ request }: { request: { idMesa: string } }) => this.orderService.updateStatuss({idMesa:request.idMesa}),
+  // });
+   
   getById(orderId: number) {
     if (orderId) {
       this.orderService.getById(orderId).subscribe({
@@ -131,9 +114,7 @@ export default class OrderComponent {
   getAll() {
     this.orderService.getAll().subscribe({
       next: (value) => {
-        this.orders.set(value);
-          this.filterView();
-      
+        this.orders.set(value);     
       },
     });
   }
@@ -145,18 +126,6 @@ export default class OrderComponent {
     }
   }
 
-filterView() {
-  const status = this.orderStatus.tableId;
-
-  status
-    ? this.orderService.updateStatus(status).subscribe({
-        next: (viewAllCopy) => {
-          this.filter.set(viewAllCopy);
-        }
-      })
-    : this.filter.set(this.orders());
-}
-
 
   searchById() {
     const idValue = this.orderId.value;
@@ -165,7 +134,7 @@ filterView() {
     (order) => order.orderId.toString().includes(idValue))
     this.filter.set(searchFilter)
     }else{
-      this.filterView()
+      this.filter.set(this.orders())
     }}
 
 

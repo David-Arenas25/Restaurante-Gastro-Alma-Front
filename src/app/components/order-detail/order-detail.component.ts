@@ -3,12 +3,10 @@ import { OrderService } from '../../service/order.service';
 import { Order } from '../../model/order.model';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, CurrencyPipe, NgClass } from '@angular/common';
-import { DishComponent } from '../dish/dish.component';
-import { DrinkComponent } from '../drink/drink.component';
 import { DishorderComponent } from '../dishorder/dishorder.component';
 import DrinkorderComponent from '../drinkorder/drinkorder.component';
-import { ActivatedRoute, Route, Router, RouterLinkWithHref } from '@angular/router';
-import { OrderStatusService } from 'src/app/service/order-status.service';
+import {Router, RouterLinkWithHref } from '@angular/router';
+import { OrderStatusService } from '../../service/order-status.service';
 
 
 @Component({
@@ -20,8 +18,6 @@ import { OrderStatusService } from 'src/app/service/order-status.service';
     NgClass,
     ReactiveFormsModule,
     CurrencyPipe,
-    DishComponent,
-    DrinkComponent,
     DishorderComponent,
     DrinkorderComponent,
   ],
@@ -43,7 +39,8 @@ export default class OrderDetailComponent {
   waiterId = new FormControl('');
   showOrderPanel = true;
   showPanel = output<boolean>();
-  constructor(readonly orderStatus:OrderStatusService,private readonly orderService:OrderService,private router:Router) {}
+  orderStatus = inject(OrderStatusService);
+  constructor(private readonly orderService:OrderService,private router:Router) {}
 
  ngOnInit() {
     

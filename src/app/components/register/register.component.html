@@ -1,0 +1,22 @@
+<div class="register-container">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="nombreUsuario">Nombre de usuario</label>
+      <input id="nombreUsuario" formControlName="nombreUsuario" type="text" />
+    </div>
+    <div>
+      <label for="password">Contraseña</label>
+      <input id="password" formControlName="password" type="password" />
+    </div>
+    <div>
+      <label for="roles">Rol</label>
+      <select id="roles" formControlName="roles">
+        <option value="" disabled selected>Selecciona un rol</option>
+        <option *ngFor="let rol of roles" [value]="rol.value">{{ rol.label }}</option>
+      </select>
+    </div>
+    <button type="submit" [disabled]="registerForm.invalid">Registrar</button>
+  </form>
+  <div *ngIf="successMessage" class="success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+</div>
